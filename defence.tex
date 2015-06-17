@@ -13,14 +13,16 @@
 
 \usepackage{color}
 \usepackage{booktabs}
-\usepackage{minted}
 \usepackage{tikz}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
-
+\setbeamertemplate{navigation symbols}{}
+\setbeamerfont{page number in head/foot}{size=\normalsize}
 \setbeamertemplate{footline}[frame number]
 \usetikzlibrary{positioning}
+\AtBeginSection{\frame{\sectionpage}}
+%% \AtBeginSubsection{\frame{\subsectionpage}}
 
 \newcommand*\nodestatecolor{green}
 \newcommand*\scalefilter{1}
@@ -32,14 +34,13 @@
 \tikzstyle{arr}=[-latex,ultra thick]
 \tikzstyle{dummy}=[minimum width=2.6cm]
 
-\usemintedstyle{trac}
 
 \title{Absolute scale velocity determination
 combining visual and inertial
 measurements for micro aerial
 vehicles}
 \subtitle{}
-\date{\today}
+\date{June 24, 2015}
 \author{Jacques Kaiser}
 \institute{INRIA}
 
@@ -47,14 +48,9 @@ vehicles}
 
 \maketitle
 
-\begin{frame}
-\frametitle{Table of Contents}
-\tableofcontents
-\end{frame}
-
 \section{Sensor fusion}
 
-\begin{frame}{Micro aerial vehicle}
+\begin{frame}{Micro aerial vehicles}
 \includegraphics<1>[width=0.6\textwidth]{images/drone.png}
 \includegraphics<2>[width=0.6\textwidth]{images/droneState.png}
 \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
@@ -152,7 +148,7 @@ We need a \textbf{deterministic solution}
 
 \subsection{Deterministic solution}
 
-\begin{frame}{Deterministic solution in Computer Vision}
+\begin{frame}{Deterministic solutions in Computer Vision}
 
 \begin{figure}
 \centering
@@ -174,33 +170,56 @@ But the relative translation and distance to features are recovered only \textbf
 \end{frame}
 
 
-\plain{Absolute scale from visual measurements}{How big is this building?\vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingDetour.png}\end{center}}
+{ % all template changes are local to this group.
+    \setbeamertemplate{navigation symbols}{}
+    \begin{frame}[plain]{Absolute scale from visual measurements}
+      How big is this building?
+      \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingDetour.png}\end{center}
+     \end{frame}
+}
+{ % all template changes are local to this group.
+    \setbeamertemplate{navigation symbols}{}
+    \begin{frame}[plain]{Absolute scale from visual measurements}
+      \vspace{1.1em}
+      \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}
+     \end{frame}
+}
 
-% we can tell the central door is bigger than the people
-% but now way to determine physical quantities: how big, how far, how fast is the camera moving,..
-% Even provided with many images
-%
 
-\plain{Absolute scale from visual measurements}{\vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}}
-% We need to known a physical quantity to set the absolute scale
-% That's how drones are initialized..
+%% \begin{frame}{Absolute scale from visual measurements}
+%%   How big is this building?
+%%   \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingDetour.png}\end{center}
+
+%% \end{frame}
+
+%% % we can tell the central door is bigger than the people
+%% % but now way to determine physical quantities: how big, how far, how fast is the camera moving,..
+%% % Even provided with many images
+%% %
+
+%% \begin{frame}{Absolute scale from visual measurements}
+%%   \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}
+%% \end{frame}
+%% % We need to known a physical quantity to set the absolute scale
+%% % That's how drones are initialized..
 
 
 \begin{frame}{Methods to recover the absolute scale}
 
-\begin{figure}
-\includegraphics[width=0.6\textwidth{images/referenceInEnv.png}
-\end{figure}
 
-% \begin{figure}
-% \centering
-% \begin{subfigure}[b]{0.3\textwidth}
+  \includegraphics[width=0.45\textwidth]{images/referenceInEnv.png}~
+  \includegraphics<2->[width=0.45\textwidth]{images/altitudeSensor.png}
 
-% \end{subfigure}
-% \begin{subfigure}[b]{0.3\textwidth}
-% \includegraphics{images/altitudeSensor.png}
-% \end{subfigure}
-% \end{figure}
+  \begin{columns}[T] % contents are top vertically aligned
+    \column<3->{.46\textwidth}
+    \centering
+    Not suited to unknown environments
+
+    \column<3->{.5\textwidth}
+    \centering
+    Unprecise, works only in hover
+\end{columns}
+
 \end{frame}
 
 % so far we only considered visual measurements
@@ -249,6 +268,8 @@ Output:
 
 \end{frame}
 
+
+
 \subsection{The closed-form solution}
 
 \begin{frame}{The closed-form solution - 2014}
@@ -258,6 +279,11 @@ One equation, verified for all point features, at each observation
 
 Overconstrained linear system
 
+\end{frame}
+
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
 \end{frame}
 
 
