@@ -19,6 +19,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
 \setbeamerfont{page number in head/foot}{size=\normalsize}
 \setbeamertemplate{footline}[frame number]
 \usetikzlibrary{positioning}
@@ -264,8 +265,8 @@ absolute scale velocity determination combining visual and inertial measurements
 
 Requires:
 \begin{itemize}
-\item Camera;
-\item IMU;
+\item Calibrated camera;
+\item Inertial Measurement Unit (IMU);
 \item External Camera IMU transformation.
 \end{itemize}
 
@@ -279,7 +280,7 @@ Output:
 \onslide<3->
 
 \[
-S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
+S_j = \textcolor{red}{\lambda_1^i}\mu_1^i - \textcolor{red}{V} t_j - \textcolor{red}{G} \frac{t_j^2}{2} - \textcolor{red}{\lambda^i_j} \mu^i_j
 \]
 \end{frame}
 
@@ -332,20 +333,25 @@ $50\%$ relative error on speed and distance estimation
 \begin{frame}{Improving the performance}
   What makes the estimations so bad?
 
-  \onslide<2->
+  \begin{block}{Possible bottlenecks}
+    \begin{itemize}[<+->]
+    \item Motion;
+    \item Observed features;
+    \item For all sensors:
+      \begin{itemize}[]
+      \item Impact of \textcolor{blue}{bias} on performance;
+      \item Impact of \textcolor{green}{non systematic errors} on performance.
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+
+  \onslide<3->
   Sensors provide measurements affected by a Gaussian noise:
 
   \[
-  N(\mu + \textcolor<3->{blue}{B}, \textcolor<3->{green}{\sigma^2})
+  N(\mu + \textcolor<2->{blue}{B}, \textcolor<2->{green}{\sigma^2})
   \]
 
-  \begin{block}{Possible bottlenecks}
-    For all sensors:
-    \begin{itemize}
-    \item Impact of \textcolor{blue}{bias} on performance;
-    \item Impact of \textcolor{green}{non systematic errors} on performance.
-    \end{itemize}
-  \end{block}
 \end{frame}
 
 
@@ -363,56 +369,68 @@ $50\%$ relative error on speed and distance estimation
 %% S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
 %% \]
 %% \end{frame}
-\subsection{Impact of Accelerometer bias on performance}
+\subsection{Impact of accelerometer bias on performance}
 \begin{frame}{Accelerometer bias}
-  \begin{columns}
-    In dead reckoning task:
+  \begin{columns}[T]
     \column{.4\textwidth}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{\textwidth}{!}{\input{graph/deadReckoningGT}}
-    \end{figure}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{\textwidth}{!}{\input{graph/deadReckoningAccBias}}
-    \end{figure}
-    \column{.3\textwidth}
-    In the closed-form solution:
-
-  \end{columns}
-\end{frame}
-
-\subsection{Impact of Gyroscope bias on performance}
-\begin{frame}{Gyroscope bias}
-  \begin{columns}
     In dead reckoning task:
-    \column{.4\textwidth}
-
-
     \begin{figure}[h!]
       \centering
-      \resizebox{0.7\textwidth}{!}{\input{graph/deadReckoningGT}}
+      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningGT}}
+      \caption{Ground truth motion}
     \end{figure}
     \begin{figure}[h!]
       \centering
-      \resizebox{0.7\textwidth}{!}{\input{graph/deadReckoningGyroBias}}
-    \end{figure}
+      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningAccBias}}
+      \caption{Dead reckoning with accelerometer bias}
+   \end{figure}
+
     \column{.5\textwidth}
     In the closed-form solution:
-
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.85\textwidth}{!}{\input{graph/accBiasSpeed}}
+      \caption{Speed estimation error with varying accelerometer bias}
+    \end{figure}
   \end{columns}
 \end{frame}
 
+\subsection{Impact of gyroscope bias on performance}
+\begin{frame}{Gyroscope bias}
+  \begin{columns}[T]
+    \column{.4\textwidth}
+    In dead reckoning task:
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningGT}}
+      \caption{Ground truth motion}
+    \end{figure}
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningGyroBias}}
+      \caption{Dead reckoning with gyroscope bias}
+    \end{figure}
+
+    \column{.5\textwidth}
+    In the closed-form solution:
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.85\textwidth}{!}{\input{graph/gyroBiasSpeed}}
+      \caption{Speed estimation error with varying gyroscope bias}
+    \end{figure}
+  \end{columns}\end{frame}
+
+\subsection{Estimating the gyroscope bias}
 \begin{frame}{Estimating the gyroscope bias}
 
   \begin{itemize}[<+->]
   \item When solving  $\Xi X = S$, we are solving $\argmin_X ||\Xi X - S||^2$;
-  \item Unfortunately, We can not express the gyroscope bias linearly;
+  \item Unfortunately, we can not express the gyroscope bias linearly;
   \item Alternative: non-linear minimization
   \[
   \argmin_{B,X} ||\Xi X - S||^2
   \]
-  With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$
+  {\small With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
   \end{itemize}
 
   \onslide<3->
@@ -430,7 +448,7 @@ $50\%$ relative error on speed and distance estimation
   We introduce a regularization paremeter $\lambda$:
 
   \[
-  \argmin_{B,X} ||\Xi X - S||^2 + $\lambda$ \times B^2
+  \argmin_{B,X} ||\Xi X - S||^2 + \lambda \times |B|
   \]
 
   \onslide<2->
@@ -446,15 +464,29 @@ $50\%$ relative error on speed and distance estimation
     \begin{figure}[h!]
       \centering
       \resizebox{\textwidth}{!}{\input{graph/costXZReg}}
-      \caption{With regularization $\lambda=3$}
+      \caption{With regularization $\lambda =3$}
     \end{figure}
   \end{columns}
 
 \end{frame}
 
-\section{Conclusion}
-\begin{frame}{Conclusion}
+\subsection{Validation}
+
+\begin{frame}{Results}
+  \begin{figure}[h!]
+    \centering
+    \resizebox{\textwidth}{!}{\input{graph/speed}}
+    \caption{Velocity estimation error\\
+      Original closed-form solution\\
+      Regularized optimized closed-form solution\\
+      Initialized Kalman-Filter}
+  \end{figure}
+
+  Moreover, our technique also provides the gyroscope bias
+
 \end{frame}
+
+\section{Conclusion}
 
 \begin{frame}{Potential PhD}
 \end{frame}
