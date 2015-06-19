@@ -14,6 +14,7 @@
 \usepackage{color}
 \usepackage{booktabs}
 \usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
@@ -23,6 +24,10 @@
 \usetikzlibrary{positioning}
 \AtBeginSection{\frame{\sectionpage}}
 %% \AtBeginSubsection{\frame{\subsectionpage}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+%% \DeclareMathOperator*{\argmin}{arg\,min}
+
+
 
 \newcommand*\nodestatecolor{green}
 \newcommand*\scalefilter{1}
@@ -169,6 +174,7 @@ But the relative translation and distance to features are recovered only \textbf
 % Camera is an angle sensor
 \end{frame}
 
+\subsection{Absolute scale}
 
 { % all template changes are local to this group.
     \setbeamertemplate{navigation symbols}{}
@@ -217,7 +223,10 @@ But the relative translation and distance to features are recovered only \textbf
 
     \column<3->{.5\textwidth}
     \centering
-    Unprecise, works only in hover
+    Not precise, works only in hover
+
+    %add column for GPS
+
 \end{columns}
 
 \end{frame}
@@ -228,7 +237,7 @@ But the relative translation and distance to features are recovered only \textbf
 
 The IMU consists of two sensors providing \textbf{physical quantities}:
 \begin{itemize}
-\item Accelerometer: linear acceleration ($m/s^2$);
+\item Accelerometer: linear acceleration - gravity ($m/s^2$);
 \item Gyroscope: angular velocity ($rad/s$).
 \end{itemize}
 
@@ -243,70 +252,212 @@ absolute scale velocity determination combining visual and inertial measurements
 % %bias ?
 % \end{frame}
 
-
-
-% So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
-\begin{frame}{The closed-form solution - 2014}
-
-Deterministic solution
-
-
-Input:
-\begin{itemize}
-\item Matching point-features over a time interval; \hfill \onslide<2->{\textcolor{red}{camera}}
-\item Linear acceleration; \hfill \onslide<2->{\textcolor{blue}{IMU}}
-\item Angular velocity; \hfill \onslide<2->{\textcolor{blue}{IMU}}
-\item External Camera IMU transformation. \hfill \onslide<2->{\textcolor{black}{calibration}}
-\end{itemize}
-
-Output:
-\begin{itemize}
-\item Initial velocity; \hfill \onslide<2->{\textcolor{green}{absolute scale}}
-\item Distance to point-features; \hfill \onslide<2->{\textcolor{green}{absolute  scale}}
-\item Attitude.
-\end{itemize}
-
-\end{frame}
-
-
-
-\subsection{The closed-form solution}
-
-\begin{frame}{The closed-form solution - 2014}
-
-One equation, verified for all point features, at each observation
-
-
-Overconstrained linear system
-
-\end{frame}
-
 \begin{frame}
 \frametitle{Table of Contents}
 \tableofcontents
 \end{frame}
 
+\section{The closed-form solution}
 
-\begin{frame}{Problem: noisy sensors}
-Bias: systematic error
+% So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
+\begin{frame}{The Closed-Form Solution - 2014}
+
+Requires:
+\begin{itemize}
+\item Camera;
+\item IMU;
+\item External Camera IMU transformation.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item \alert<2->{Initial velocity};
+\item \alert<2->{Distance to point-features};
+\item Attitude.
+\end{itemize}
+
+\onslide<3->
+
+\[
+S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
+\]
 \end{frame}
 
-\begin{frame}{Numerical stability}
-Small error in input yields big error in the output
+\subsection{Linear system}
+\begin{frame}{The Overconstrained Linear System}
+
+  \[
+  \textcolor<3->{green}{S_j} = \textcolor<3->{red}{\lambda_1^i}\textcolor<3->{blue}{\mu_1^i} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_j} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_j^2}{2}} - \textcolor<3->{red}{\lambda^i_j}\textcolor<3->{blue}{\mu^i_j}
+  \]
+
+  Valid for every point-features $i$ at any time $t_j$:
+
+  \onslide<2->
+  \[
+  \left[
+    \begin{array}{c}
+      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^1_2}\textcolor<3->{blue}{\mu^1_2} \\
+      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^2}\textcolor<3->{blue}{\mu_1^2} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^2_2}\textcolor<3->{blue}{\mu^2_2} \\
+      \vdots \\
+      \textcolor<3->{green}{S_3} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_3} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_3^2}{2}} - \textcolor<3->{red}{\lambda^1_3}\textcolor<3->{blue}{\mu^1_3} \\
+      \vdots \\
+      \textcolor<3->{green}{S_N} = \textcolor<3->{red}{\lambda_1^{n_i}}\textcolor<3->{blue}{\mu_1^{n_i}} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_N} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_N^2}{2}} - \textcolor<3->{red}{\lambda^{n_i}_N}\textcolor<3->{blue}{\mu^{n_i}_N}
+    \end{array}
+    \right.
+    \]
+
+    \onslide<3->
+    \[
+    \textcolor{blue}{\Xi} \textcolor{red}{X} = \textcolor{green}{S}
+    \]
+
 \end{frame}
+
+
+\begin{frame}{Problem: not robust in practice}
+\emph{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
+\rightline{{\rm --- Matthias Faessler, ICRA 2015}}
+
+\begin{columns}
+  \column<2->{.5\textwidth}
+\begin{figure}[h!]
+  \centering
+  \resizebox{\textwidth}{!}{\input{graph/CF2}}
+\end{figure}
+\column<3->{.5\textwidth}
+$50\%$ relative error on speed and distance estimation
+\end{columns}
+\end{frame}
+
+\begin{frame}{Improving the performance}
+  What makes the estimations so bad?
+
+  \onslide<2->
+  Sensors provide measurements affected by a Gaussian noise:
+
+  \[
+  N(\mu + \textcolor<3->{blue}{B}, \textcolor<3->{green}{\sigma^2})
+  \]
+
+  \begin{block}{Possible bottlenecks}
+    For all sensors:
+    \begin{itemize}
+    \item Impact of \textcolor{blue}{bias} on performance;
+    \item Impact of \textcolor{green}{non systematic errors} on performance.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+%% \begin{frame}{Numerical stability}
+%%   \[
+%%   \left[
+%%     \begin{array}{lcl}
+%%       S_j &=& \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j\\
+%%       0_3 &=& \lambda_1^1\mu_1^1 - \lambda_j^1\mu_j^1 - \lambda_1^i\mu_1^i + \lambda^i_j \mu^i_j
+%%     \end{array}
+%%   \right.
+%%   \]
+
+%% \[
+%% S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
+%% \]
+%% \end{frame}
+\subsection{Impact of Accelerometer bias on performance}
 \begin{frame}{Accelerometer bias}
-Robust
-\end{frame}
-\begin{frame}{Gyroscope bias}
-Sensitive
+  \begin{columns}
+    In dead reckoning task:
+    \column{.4\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \resizebox{\textwidth}{!}{\input{graph/deadReckoningGT}}
+    \end{figure}
+    \begin{figure}[h!]
+      \centering
+      \resizebox{\textwidth}{!}{\input{graph/deadReckoningAccBias}}
+    \end{figure}
+    \column{.3\textwidth}
+    In the closed-form solution:
 
-Can we solve this?
+  \end{columns}
+\end{frame}
+
+\subsection{Impact of Gyroscope bias on performance}
+\begin{frame}{Gyroscope bias}
+  \begin{columns}
+    In dead reckoning task:
+    \column{.4\textwidth}
+
+
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.7\textwidth}{!}{\input{graph/deadReckoningGT}}
+    \end{figure}
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.7\textwidth}{!}{\input{graph/deadReckoningGyroBias}}
+    \end{figure}
+    \column{.5\textwidth}
+    In the closed-form solution:
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Estimating the gyroscope bias}
-Minimizing the residual WRT gyro bias
+
+  \begin{itemize}[<+->]
+  \item When solving  $\Xi X = S$, we are solving $\argmin_X ||\Xi X - S||^2$;
+  \item Unfortunately, We can not express the gyroscope bias linearly;
+  \item Alternative: non-linear minimization
+  \[
+  \argmin_{B,X} ||\Xi X - S||^2
+  \]
+  With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$
+  \end{itemize}
+
+  \onslide<3->
+  \begin{figure}[h!]
+        \centering
+        \resizebox{0.47\textwidth}{!}{\input{graph/costXZ2}}
+  \end{figure}
+
+  \onslide<4->
+  Symmetry induced by the strong weight of the gravity
 \end{frame}
 
+\begin{frame}{Getting rid of the symmetry}
+
+  We introduce a regularization paremeter $\lambda$:
+
+  \[
+  \argmin_{B,X} ||\Xi X - S||^2 + $\lambda$ \times B^2
+  \]
+
+  \onslide<2->
+  \begin{columns}
+    \column{.4\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \resizebox{\textwidth}{!}{\input{graph/costXZ}}
+      \caption{No regularization}
+    \end{figure}~
+
+    \column{.4\textwidth}
+    \begin{figure}[h!]
+      \centering
+      \resizebox{\textwidth}{!}{\input{graph/costXZReg}}
+      \caption{With regularization $\lambda=3$}
+    \end{figure}
+  \end{columns}
+
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Conclusion}
+\end{frame}
+
+\begin{frame}{Potential PhD}
+\end{frame}
 %% \begin{document}
 %% \title{Simple Beamer Class}
 %% \author{Sascha Frank}
