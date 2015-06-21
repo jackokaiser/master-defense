@@ -19,7 +19,6 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{caption}{\raggedright\insertcaption\par}
 \setbeamerfont{page number in head/foot}{size=\normalsize}
 \setbeamertemplate{footline}[frame number]
 \usetikzlibrary{positioning}
@@ -27,11 +26,12 @@
 %% \AtBeginSubsection{\frame{\subsectionpage}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 %% \DeclareMathOperator*{\argmin}{arg\,min}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
 
 
 
 \newcommand*\nodestatecolor{green}
-\newcommand*\scalefilter{1}
+\newcommand*\scalefilter{0.7}
 \newcommand*\initialstatetext{Previous State}
 \newcommand*\initialstatecolor{yellow}
 
@@ -98,7 +98,7 @@ r \\ \dot{r}\\ q
 \textbf{Filter based method}
 
 \only<2->{\renewcommand*\nodestatecolor{yellow}}
-\only<2->{\renewcommand*\scalefilter{0.7}}
+%% \only<2->{\renewcommand*\scalefilter{0.7}}
 \only<4->{\renewcommand*\initialstatecolor{blue!60}}
 \only<4->{\renewcommand*\initialstatetext{Initial State}}
 
@@ -161,14 +161,14 @@ We need a \textbf{deterministic solution}
 \includegraphics[width=0.5\textwidth]{images/directMethod.png}
 \end{figure}
 
-\onslide<2->
-\begin{itemize}
-\item 8-point algorithm;
-\item sparse model-based image alignment;
-\item ...
-\end{itemize}
+%% \onslide<2->
+%% \begin{itemize}
+%% \item 8-point algorithm;
+%% \item sparse model-based image alignment;
+%% \item ...
+%% \end{itemize}
 
-\onslide<3->
+\onslide<2->
 
 But the relative translation and distance to features are recovered only \textbf{up to scale}
 
@@ -272,15 +272,15 @@ Requires:
 
 Output:
 \begin{itemize}
-\item \alert<2->{Initial velocity};
-\item \alert<2->{Distance to point-features};
-\item Attitude.
+\item \textcolor<3->{red}{Initial velocity};
+\item \textcolor<3->{green}{Distance to point-features};
+\item \textcolor<3->{blue}{Attitude}.
 \end{itemize}
 
-\onslide<3->
+\onslide<2->
 
 \[
-S_j = \textcolor{red}{\lambda_1^i}\mu_1^i - \textcolor{red}{V} t_j - \textcolor{red}{G} \frac{t_j^2}{2} - \textcolor{red}{\lambda^i_j} \mu^i_j
+S_j = \textcolor<3->{green}{\lambda_1^i}\mu_1^i - \textcolor<3->{red}{V} t_j - \textcolor<3->{blue}{G} \frac{t_j^2}{2} - \textcolor<3->{green}{\lambda^i_j} \mu^i_j
 \]
 \end{frame}
 
@@ -334,18 +334,18 @@ $50\%$ relative error on speed and distance estimation
   What makes the estimations so bad?
 
   \begin{block}{Possible bottlenecks}
-    \begin{itemize}[<+->]
-    \item Motion;
-    \item Observed features;
-    \item For all sensors:
-      \begin{itemize}[]
-      \item Impact of \textcolor{blue}{bias} on performance;
-      \item Impact of \textcolor{green}{non systematic errors} on performance.
-      \end{itemize}
+    \begin{itemize}
+    \item<1-> Motion;
+    \item<2-> Observed features;
+    \item<3-> Noisy sensors.
+    %%   \begin{itemize}
+    %%   \item Impact of \textcolor{blue}{bias} on performance;
+    %%   \item Impact of \textcolor{green}{non systematic errors} on performance.
+    %%   \end{itemize}
     \end{itemize}
   \end{block}
 
-  \onslide<3->
+  \onslide<4->
   Sensors provide measurements affected by a Gaussian noise:
 
   \[
@@ -430,7 +430,7 @@ $50\%$ relative error on speed and distance estimation
   \[
   \argmin_{B,X} ||\Xi X - S||^2
   \]
-  {\small With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
+  {\tiny With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
   \end{itemize}
 
   \onslide<3->
@@ -475,7 +475,7 @@ $50\%$ relative error on speed and distance estimation
 \begin{frame}{Results}
   \begin{figure}[h!]
     \centering
-    \resizebox{\textwidth}{!}{\input{graph/speed}}
+    \resizebox{0.5\textwidth}{!}{\input{graph/speed}}
     \caption{Velocity estimation error\\
       Original closed-form solution\\
       Regularized optimized closed-form solution\\
@@ -487,6 +487,10 @@ $50\%$ relative error on speed and distance estimation
 \end{frame}
 
 \section{Conclusion}
+
+\begin{frame}{Conclusion}
+
+\end{frame}
 
 \begin{frame}{Potential PhD}
 \end{frame}
