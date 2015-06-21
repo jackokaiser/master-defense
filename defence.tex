@@ -26,7 +26,10 @@
 %% \AtBeginSubsection{\frame{\subsectionpage}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 %% \DeclareMathOperator*{\argmin}{arg\,min}
-\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+%% \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\captionsetup[figure]{labelformat=empty}% redefines the caption setup of the figures environment in the beamer class.
+\captionsetup[subfigure]{labelformat=empty}% redefines the caption setup of the figures environment in the beamer class.
+
 
 
 
@@ -58,36 +61,24 @@ vehicles}
 
 \begin{frame}{Micro aerial vehicles}
 \includegraphics<1>[width=0.6\textwidth]{images/drone.png}
-\includegraphics<2>[width=0.6\textwidth]{images/droneState.png}
-\includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
+\includegraphics<2->[width=0.6\textwidth]{images/droneState.png}
+%% \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
 
-\onslide<4->
+\onslide<3->
 
 %drone is a rigid body - you can reduce it to a point
-\begin{columns}[T] % contents are top vertically aligned
-\column{.5\textwidth}
-\centering
-A basic state vector:
-\[
-X =
-\left[
-\begin{array}{c}
-r \\ \dot{r}\\ q
-\end{array}
-\right]
-\]
+A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientation\end{array}\right]$
 
-\column{.5\textwidth}
-        \begin{itemize}
-        \item $r$ position;
-        \item $\dot{r}$ velocity;
-        \item $q$ orientation.
-        \end{itemize}
-\end{columns}
+%% \column{.5\textwidth}
+%%         \begin{itemize}
+%%         \item $r$ position;
+%%         \item $\dot{r}$ velocity;
+%%         \item $q$ orientation.
+%%         \end{itemize}
 
-\onslide<5->
+\onslide<4->
+\vspace{1em}
 \textbf{The goal of sensor fusion is to recover the state $X$}
-
 \end{frame}
 
 \subsection{Filter based fusion}
@@ -187,7 +178,7 @@ But the relative translation and distance to features are recovered only \textbf
 { % all template changes are local to this group.
     \setbeamertemplate{navigation symbols}{}
     \begin{frame}[plain]{Absolute scale from visual measurements}
-      \vspace{1.1em}
+      \vspace{1.03em}
       \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}
      \end{frame}
 }
@@ -213,23 +204,31 @@ But the relative translation and distance to features are recovered only \textbf
 
 \begin{frame}{Methods to recover the absolute scale}
 
-
-  \includegraphics[width=0.45\textwidth]{images/referenceInEnv.png}~
-  \includegraphics<2->[width=0.45\textwidth]{images/altitudeSensor.png}
-
-  \begin{columns}[T] % contents are top vertically aligned
-    \column<3->{.46\textwidth}
+  \begin{figure}
     \centering
-    Not suited to unknown environments
-
-    \column<3->{.5\textwidth}
-    \centering
-    Not precise, works only in hover
-
-    %add column for GPS
-
-\end{columns}
-
+    \begin{subfigure}[b]{0.3\textwidth}
+      \includegraphics[width=\textwidth]{images/referenceInEnv.png}
+      \onslide<4->{
+        \caption{Not suited to unknown environments}
+      }
+    \end{subfigure}
+    \onslide<2->{
+      \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{images/altitudeSensor.png}
+      \onslide<4->{
+        \caption{Not precise, works only in hover}
+      }
+      \end{subfigure}
+    }
+    \onslide<3->{
+      \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{images/gpsSensor.png}
+      \onslide<4->{
+        \caption{Does not work in GPS denied environments}
+      }
+      \end{subfigure}
+    }
+  \end{figure}
 \end{frame}
 
 % so far we only considered visual measurements
@@ -244,8 +243,23 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 
 \end{frame}
 
-\begin{frame}{Title}
-absolute scale velocity determination combining visual and inertial measurements for micro aerial vehicles
+\begin{frame}{Back to the title}
+  \textcolor<4->{green}{Absolute scale velocity} \textcolor<3->{pink}{determination} combining \textcolor<2->{yellow}{visual and inertial measurements} for micro aerial vehicles
+  \vspace{1em}
+  \onslide<2->
+  {\centering
+    \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
+      \node (A) [input, fill=yellow] {Visual measurements};
+      \node (dummy1) [dummy, below=2mm of A] {};
+      \node (C) [input,below=2mm of dummy1, fill=yellow] {Inertial measurements};
+      \node<3-> (D) [method,right=of dummy1] {Fusion};
+      \node<4-> (E) [input, right=of D, fill=\nodestatecolor] {State (Absolute scale)};
+      \draw<3->[arr] (A.east) -- (D.175);
+      \draw<3->[arr] (C.east) -- (D.185);
+      \draw<4->[arr] (D.east) -- (E.west);
+    \end{tikzpicture}
+  }
+
 \end{frame}
 % \begin{frame}{Dead reckoning}
 % Provided only with inertial measurements, we are subject to drift.
@@ -352,6 +366,12 @@ $50\%$ relative error on speed and distance estimation
   N(\mu + \textcolor<2->{blue}{B}, \textcolor<2->{green}{\sigma^2})
   \]
 
+  \onslide<5->
+  We considered:
+  \begin{itemize}
+  \item \textcolor{blue}{Biased} accelerometer;
+  \item \textcolor{blue}{Biased} gyroscope.
+  \end{itemize}
 \end{frame}
 
 
@@ -369,56 +389,29 @@ $50\%$ relative error on speed and distance estimation
 %% S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
 %% \]
 %% \end{frame}
-\subsection{Impact of accelerometer bias on performance}
-\begin{frame}{Accelerometer bias}
-  \begin{columns}[T]
-    \column{.4\textwidth}
-    In dead reckoning task:
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningGT}}
-      \caption{Ground truth motion}
-    \end{figure}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningAccBias}}
-      \caption{Dead reckoning with accelerometer bias}
-   \end{figure}
+\subsection{Identifying performance bottlenecks}
+\begin{frame}{Biased inertial measurements}
 
+  \begin{center}
+    \textbf{Speed estimation error}
+  \end{center}
+
+  \begin{columns}[T]
     \column{.5\textwidth}
-    In the closed-form solution:
     \begin{figure}[h!]
       \centering
       \resizebox{0.85\textwidth}{!}{\input{graph/accBiasSpeed}}
-      \caption{Speed estimation error with varying accelerometer bias}
+      \caption{Varying accelerometer bias}
     \end{figure}
-  \end{columns}
-\end{frame}
-
-\subsection{Impact of gyroscope bias on performance}
-\begin{frame}{Gyroscope bias}
-  \begin{columns}[T]
-    \column{.4\textwidth}
-    In dead reckoning task:
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningGT}}
-      \caption{Ground truth motion}
-    \end{figure}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.85\textwidth}{!}{\input{graph/deadReckoningGyroBias}}
-      \caption{Dead reckoning with gyroscope bias}
-    \end{figure}
-
     \column{.5\textwidth}
-    In the closed-form solution:
     \begin{figure}[h!]
       \centering
       \resizebox{0.85\textwidth}{!}{\input{graph/gyroBiasSpeed}}
-      \caption{Speed estimation error with varying gyroscope bias}
+      \caption{Varying gyroscope bias}
     \end{figure}
-  \end{columns}\end{frame}
+
+  \end{columns}
+\end{frame}
 
 \subsection{Estimating the gyroscope bias}
 \begin{frame}{Estimating the gyroscope bias}
@@ -428,45 +421,25 @@ $50\%$ relative error on speed and distance estimation
   \item Unfortunately, we can not express the gyroscope bias linearly;
   \item Alternative: non-linear minimization
   \[
-  \argmin_{B,X} ||\Xi X - S||^2
+  \argmin_{\textcolor{red}{B},X} ||\Xi X - S||^2 \onslide<5->{\textcolor{blue}{+ \lambda \times |B|}}
   \]
   {\tiny With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
   \end{itemize}
 
   \onslide<3->
   \begin{figure}[h!]
-        \centering
-        \resizebox{0.47\textwidth}{!}{\input{graph/costXZ2}}
+    \centering
+      \begin{subfigure}[b]{0.47\textwidth}
+        \resizebox{\textwidth}{!}{\input{graph/costXZ2}}
+        \onslide<4->{\caption{Symmetry induced by the strong weight of the gravity}}
+      \end{subfigure}
+      \onslide<5->{
+      \begin{subfigure}[b]{0.47\textwidth}
+        \resizebox{\textwidth}{!}{\input{graph/costXZReg}}
+        \caption{With regularization $\lambda =3$}
+      \end{subfigure}
+      }
   \end{figure}
-
-  \onslide<4->
-  Symmetry induced by the strong weight of the gravity
-\end{frame}
-
-\begin{frame}{Getting rid of the symmetry}
-
-  We introduce a regularization paremeter $\lambda$:
-
-  \[
-  \argmin_{B,X} ||\Xi X - S||^2 + \lambda \times |B|
-  \]
-
-  \onslide<2->
-  \begin{columns}
-    \column{.4\textwidth}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{\textwidth}{!}{\input{graph/costXZ}}
-      \caption{No regularization}
-    \end{figure}~
-
-    \column{.4\textwidth}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{\textwidth}{!}{\input{graph/costXZReg}}
-      \caption{With regularization $\lambda =3$}
-    \end{figure}
-  \end{columns}
 
 \end{frame}
 
@@ -475,13 +448,13 @@ $50\%$ relative error on speed and distance estimation
 \begin{frame}{Results}
   \begin{figure}[h!]
     \centering
+    \textbf{Velocity estimation error}\\
+    \vspace{1em}
+
     \resizebox{0.5\textwidth}{!}{\input{graph/speed}}
-    \caption{Velocity estimation error\\
-      Original closed-form solution\\
-      Regularized optimized closed-form solution\\
-      Initialized Kalman-Filter}
   \end{figure}
 
+  \onslide<2->
   Moreover, our technique also provides the gyroscope bias
 
 \end{frame}
@@ -494,6 +467,14 @@ $50\%$ relative error on speed and distance estimation
 
 \begin{frame}{Potential PhD}
 \end{frame}
+
+\begin{frame}[plain,c]
+  \begin{center}
+    Thank you for your attention,\\
+    Any question?
+  \end{center}
+\end{frame}
+
 %% \begin{document}
 %% \title{Simple Beamer Class}
 %% \author{Sascha Frank}
