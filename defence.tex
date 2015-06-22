@@ -22,7 +22,6 @@
 \setbeamerfont{page number in head/foot}{size=\normalsize}
 \setbeamertemplate{footline}[frame number]
 \usetikzlibrary{positioning}
-\AtBeginSection{\frame{\sectionpage}}
 %% \AtBeginSubsection{\frame{\subsectionpage}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 %% \DeclareMathOperator*{\argmin}{arg\,min}
@@ -30,6 +29,30 @@
 \captionsetup[figure]{labelformat=empty}% redefines the caption setup of the figures environment in the beamer class.
 \captionsetup[subfigure]{labelformat=empty}% redefines the caption setup of the figures environment in the beamer class.
 
+\defbeamertemplate{section page}{mine}[1][]{%
+  \begin{centering}
+    {\usebeamerfont{section name}\usebeamercolor[fg]{section name}#1}
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=12pt,center]{part title}
+      \usebeamerfont{section title}\insertsection\par
+    \end{beamercolorbox}
+  \end{centering}
+}
+
+\defbeamertemplate{section page}{mine2}[1][]{%
+  \begin{centering}
+    {\usebeamerfont{section name}\usebeamercolor[fg]{section name}#1}
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=12pt,center]{part title}
+      \usebeamerfont{section title}\insertsection\par
+    \end{beamercolorbox}
+  \end{centering}
+  \vspace{2cm}
+         {\small Transactions on Robotics (T-RO) 2012\\
+           International Journal of Computer Vision (IJCV) 2014}
+}
+
+\setbeamertemplate{section page}[mine]
 
 
 
@@ -65,12 +88,21 @@ vehicles}
 
 \section{Sensor fusion}
 
+\AtBeginSection{\frame{\sectionpage}}
+
 \begin{frame}{Micro aerial vehicles}
 \includegraphics<1>[width=0.6\textwidth]{images/drone.png}
-\includegraphics<2->[width=0.6\textwidth]{images/droneState.png}
+\includegraphics<2>[width=0.6\textwidth]{images/droneMapping.png}
+\includegraphics<3>[width=0.6\textwidth]{images/droneRescue.png}
+\includegraphics<4-5>[width=0.6\textwidth]{images/droneFireIndoor.png}
+\includegraphics<6->[width=0.6\textwidth]{images/droneState.png}
 %% \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
 
-\onslide<3->
+\onslide<5->
+\vspace{1em}
+\textbf{Localisation} in \textbf{various environments}
+
+\onslide<6->
 
 %drone is a rigid body - you can reduce it to a point
 A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientation\end{array}\right]$
@@ -82,9 +114,9 @@ A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientat
 %%         \item $q$ orientation.
 %%         \end{itemize}
 
-\onslide<4->
+\onslide<7->
 \vspace{1em}
-\textbf{The goal of sensor fusion is to recover the state $X$}
+\textbf{The goal of sensor fusion for state estimation is to recover $X$}
 \end{frame}
 
 \subsection{Filter based fusion}
@@ -284,6 +316,9 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 \tableofcontents
 \end{frame}
 
+
+\setbeamertemplate{section page}[mine2]
+
 \section{The closed-form solution}
 
 % So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
@@ -432,9 +467,9 @@ $50\%$ relative error on speed and distance estimation
   \item When solving  $\Xi X = S$, we are solving $\argmin_X ||\Xi X - S||^2$;
   \item Unfortunately, we can not express the gyroscope bias linearly;
   \item Alternative: non-linear minimization
-  \[
-  \argmin_{\textcolor{red}{B},X} ||\Xi X - S||^2 \onslide<5->{\textcolor{blue}{+ \lambda \times |B|}}
-  \]
+    \[
+    cost(B) = \argmin_X ||\Xi X - S||^2 \onslide<5->{\textcolor{blue}{+ \lambda \times |B|}}
+    \]
   {\tiny With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
   \end{itemize}
 
@@ -460,16 +495,23 @@ $50\%$ relative error on speed and distance estimation
 \begin{frame}{Results}
   \begin{figure}[h!]
     \centering
-    \textbf{Velocity estimation error}\\
+    \textbf{Speed estimation error}\\
     \vspace{1em}
 
     \resizebox{0.5\textwidth}{!}{\input{graph/speed}}
   \end{figure}
 
   \onslide<2->
-  Moreover, our technique also provides the gyroscope bias
+  Moreover, our technique:
+  \begin{itemize}
+    \item Does not require initialization;
+    \item Provides the gyroscope bias.
+  \end{itemize}
 
 \end{frame}
+
+
+\setbeamertemplate{section page}[mine]
 
 \section{Conclusion}
 
@@ -490,7 +532,7 @@ $50\%$ relative error on speed and distance estimation
 
 \end{frame}
 
-\begin{frame}{Potential PhD}
+\begin{frame}{Future work}
   Implementation on a real platform
   \begin{figure}[h!]
     \centering
