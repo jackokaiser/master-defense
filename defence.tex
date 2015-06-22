@@ -50,8 +50,14 @@ measurements for micro aerial
 vehicles}
 \subtitle{}
 \date{June 24, 2015}
-\author{Jacques Kaiser}
-\institute{INRIA}
+\author[Jacques Kaiser]{Jacques Kaiser\\{\small Supervised by Dr. Agostino Martinelli}}
+ \institute{INRIA\\[\medskipamount]
+      \includegraphics[width=0.18\textwidth]{images/logoUJF.jpg} \hspace{1.5cm}
+      \includegraphics[width=0.18\textwidth]{images/logoINRIA.jpg} \hspace{1.5cm}
+      \includegraphics[width=0.18\textwidth]{images/logoINP.png}
+ }
+ %% \institute{INRIA}
+ %% \titlegraphic{\includegraphics[width=\textwidth,height=.5\textheight]{someimage}}
 
 \begin{document}
 
@@ -161,7 +167,9 @@ We need a \textbf{deterministic solution}
 
 \onslide<2->
 
-But the relative translation and distance to features are recovered only \textbf{up to scale}
+{\small
+  But the relative \textbf{translation} and \textbf{distance to features} are recovered only \textbf{up to scale}
+}
 
 % Camera is an angle sensor
 \end{frame}
@@ -237,7 +245,7 @@ But the relative translation and distance to features are recovered only \textbf
 
 The IMU consists of two sensors providing \textbf{physical quantities}:
 \begin{itemize}
-\item Accelerometer: linear acceleration - gravity ($m/s^2$);
+\item Accelerometer: linear acceleration (and gravity) ($m/s^2$);
 \item Gyroscope: angular velocity ($rad/s$).
 \end{itemize}
 
@@ -254,13 +262,12 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 
   {\centering
     \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
-      \node (A) [input, fill=yellow] {Visual measurements};
-      \node (dummy1) [dummy, below=2mm of A] {};
-      \node (C) [input,below=2mm of dummy1, fill=yellow] {Inertial measurements};
-      \node<3-> (D) [method,right=of dummy1] {Fusion};
+      \node (A) [input, fill=yellow] {Measurements};
+      \node (B) [above=2mm of A] {Visual};
+      \node (C) [below=2mm of A] {Inertial};
+      \node<3-> (D) [method,right=of A] {Fusion};
       \node<4-> (E) [input, right=of D, fill=\nodestatecolor] {State (Absolute scale)};
-      \draw<3->[arr] (A.east) -- (D.175);
-      \draw<3->[arr] (C.east) -- (D.185);
+      \draw<3->[arr] (A.east) -- (D.west);
       \draw<4->[arr] (D.east) -- (E.west);
     \end{tikzpicture}
   }
@@ -310,7 +317,7 @@ S_j = \textcolor<3->{green}{\lambda_1^i}\mu_1^i - \textcolor<3->{red}{V} t_j - \
   \textcolor<3->{green}{S_j} = \textcolor<3->{red}{\lambda_1^i}\textcolor<3->{blue}{\mu_1^i} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_j} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_j^2}{2}} - \textcolor<3->{red}{\lambda^i_j}\textcolor<3->{blue}{\mu^i_j}
   \]
 
-  Valid for every point-features $i$ at any time $t_j$:
+  Valid for every point-feature $i$ at any time $t_j$:
 
   \onslide<2->
   \[
@@ -431,14 +438,14 @@ $50\%$ relative error on speed and distance estimation
   {\tiny With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
   \end{itemize}
 
-  \onslide<3->
+  \onslide<4->
   \begin{figure}[h!]
     \centering
       \begin{subfigure}[b]{0.47\textwidth}
         \resizebox{\textwidth}{!}{\input{graph/costXZ2}}
-        \onslide<4->{\caption{Symmetry induced by the strong weight of the gravity}}
+        \onslide<5->{\caption{Symmetry induced by the strong weight of the gravity}}
       \end{subfigure}
-      \onslide<5->{
+      \onslide<6->{
       \begin{subfigure}[b]{0.47\textwidth}
         \resizebox{\textwidth}{!}{\input{graph/costXZReg}}
         \caption{With regularization $\lambda =3$}
@@ -468,9 +475,28 @@ $50\%$ relative error on speed and distance estimation
 
 \begin{frame}{Conclusion}
 
+  \begin{enumerate}
+  \item Closed-form solution for visual-inertial fusion;
+    \begin{itemize}
+      \item No initialization required;
+      \item Recovers the absolute scale.
+    \end{itemize}
+  \item<2-> Does not work well in practice;
+  \item<3-> Gyroscope bias is a performance bottleneck;
+  \item<4-> \textbf{Method to estimate this bias};
+  \item<5-> Works well in practice;
+  \item<6-> Also provides the gyroscope bias.
+  \end{enumerate}
+
 \end{frame}
 
 \begin{frame}{Potential PhD}
+  Implementation on a real platform
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/drone.png}
+  \end{figure}
+
 \end{frame}
 
 \begin{frame}[plain,c]
@@ -478,6 +504,56 @@ $50\%$ relative error on speed and distance estimation
     Thank you for your attention,\\
     Any question?
   \end{center}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Gyroscope bias estimation}
+  \begin{figure}[h!]
+    \centering
+
+    \begin{subfigure}[b]{0.78\textwidth}
+      \caption{Optimized Closed-form solution}
+      \resizebox{0.45\textwidth}{!}{\input{graph/opt30ftspeed}} ~
+      \resizebox{0.45\textwidth}{!}{\input{graph/biasEstimation30Ft}}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.40\textwidth}
+      \caption{Original Closed-form solution}
+      \resizebox{\textwidth}{!}{\input{graph/gyroBiasSpeed}}
+    \end{subfigure}
+
+  \end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Numerical stability}
+
+  \begin{columns}
+    \begin{column}{.5\textwidth}
+    {\small
+    \[
+    \left[
+      \begin{array}{lcl}
+        S_j &=& \lambda_1^1\mu_1^1 - V t_j - G \frac{t_j^2}{2} - \lambda^1_j \mu^1_j\\
+        0_3 &=& \lambda_1^1\mu_1^1 - \lambda_j^1\mu_j^1 - \lambda_1^i\mu_1^i + \lambda^i_j \mu^i_j
+      \end{array}
+      \right.
+      \]
+    }
+    \end{column}
+    \vrule{}
+    \begin{column}{.5\textwidth}
+    {\small
+    \[
+    S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
+    \]
+    }
+    \end{column}
+  \end{columns}
+
+  \begin{figure}[h!]
+    \centering
+    \resizebox{0.5\textwidth}{!}{\input{graph/CF2vsCF3}}
+  \end{figure}
+
 \end{frame}
 
 %% \begin{document}

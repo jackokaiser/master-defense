@@ -1,0 +1,95 @@
+% This file was created by matlab2tikz.
+% Minimal pgfplots version: 1.3
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+%
+\begin{tikzpicture}
+
+
+
+\begin{axis}[%
+width=4.6in,
+height=1in,
+at={(0in,3in)},
+scale only axis,
+xmin=1.5,
+xmax=4.5,
+xlabel={Duration (s)},
+ytick={-0.05,0.0276,0.05},
+ymin=-0.06,
+ymax=0.06,
+xtick={1.5, 2,...,4, 4.5},
+ylabel={Bias (rad/s)}
+]
+\addplot [color=mycolor1,solid,forget plot]
+  table[row sep=crcr]{%
+1.91728659346996	0.072\\
+2	0.0332103321872858\\
+2.5	0.025037245454736\\
+3	0.0321581893592385\\
+3.5	0.027530467500012\\
+4	0.0241138134913708\\
+4.5	0.0280167461197849\\
+};
+\draw[line width=2pt,loosely dotted]  (1.5,0.0276 ) -- (4.5,0.0276);
+\end{axis}
+
+
+\begin{axis}[%
+width=4.6in,
+height=1in,
+at={(0in,1.5in)},
+scale only axis,
+xmin=1.5,
+xmax=4.5,
+xlabel={Duration (s)},
+ymin=-0.06,
+ymax=0.06,
+xtick={1.5, 2,...,4, 4.5},
+ytick={-0.05,-0.0024,0.05},
+ylabel={Bias (rad/s)}
+]
+\addplot [color=mycolor1,solid,forget plot]
+  table[row sep=crcr]{%
+1.73915180031747	-0.072\\
+2	-0.00171936386040559\\
+2.5	-0.00299882445661285\\
+3	0.00306235287226103\\
+3.5	-0.00341664285341729\\
+4	-0.00756449922739225\\
+4.5	-0.00255081057036582\\
+};
+\draw[line width=2pt,loosely dotted]  (1.5,-0.0024) -- (4.5,-0.0024);
+\end{axis}
+
+\begin{axis}[%
+width=4.6in,
+height=1in,
+at={(0in,0in)},
+scale only axis,
+xmin=1.5,
+xmax=4.5,
+xlabel={Duration (s)},
+ymin=-0.06,
+ymax=0.06,
+xtick={1.5, 2,...,4, 4.5},
+ytick={-0.05,0.0417},
+ylabel={ Bias (rad/s)}
+]
+\addplot [color=mycolor1,solid,forget plot]
+  table[row sep=crcr]{%
+1.96534533219496	-0.0720000000000001\\
+2	0.0427666230199188\\
+2.5	0.0428960425489495\\
+3	0.0445698879879639\\
+3.5	0.0428553788514979\\
+4	0.0430139443360091\\
+4.5	0.0419536987152397\\
+};
+\draw[line width=2pt,loosely dotted]  (1.5,0.0417) -- (4.5,0.0417);
+\end{axis}
+\end{tikzpicture}%
