@@ -91,10 +91,10 @@ vehicles}
 \AtBeginSection{\frame{\sectionpage}}
 
 \begin{frame}{Micro aerial vehicles}
-\includegraphics<1>[width=0.6\textwidth]{images/drone.png}
+\includegraphics<1-5>[width=0.6\textwidth]{images/drone.png}
 \includegraphics<2>[width=0.6\textwidth]{images/droneMapping.png}
 \includegraphics<3>[width=0.6\textwidth]{images/droneRescue.png}
-\includegraphics<4-5>[width=0.6\textwidth]{images/droneFireIndoor.png}
+\includegraphics<4>[width=0.6\textwidth]{images/droneFireIndoor.png}
 \includegraphics<6->[width=0.6\textwidth]{images/droneState.png}
 %% \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
 
@@ -102,7 +102,7 @@ vehicles}
 \vspace{1em}
 \textbf{Localisation} in \textbf{various environments}
 
-\onslide<6->
+\onslide<7->
 
 %drone is a rigid body - you can reduce it to a point
 A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientation\end{array}\right]$
@@ -114,7 +114,7 @@ A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientat
 %%         \item $q$ orientation.
 %%         \end{itemize}
 
-\onslide<7->
+\onslide<8->
 \vspace{1em}
 \textbf{The goal of sensor fusion for state estimation is to recover $X$}
 \end{frame}
@@ -468,7 +468,7 @@ $50\%$ relative error on speed and distance estimation
   \item Unfortunately, we can not express the gyroscope bias linearly;
   \item Alternative: non-linear minimization
     \[
-    cost(B) = \argmin_X ||\Xi X - S||^2 \onslide<5->{\textcolor{blue}{+ \lambda \times |B|}}
+    cost(B) = \argmin_X ||\Xi X - S||^2 \onslide<6->{\textcolor{blue}{+ \lambda \times |B|}}
     \]
   {\tiny With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
   \end{itemize}
@@ -558,7 +558,7 @@ $50\%$ relative error on speed and distance estimation
       \resizebox{0.45\textwidth}{!}{\input{graph/biasEstimation30Ft}}
     \end{subfigure}
 
-    \begin{subfigure}[b]{0.40\textwidth}
+    \begin{subfigure}[b]{0.35\textwidth}
       \caption{Original Closed-form solution}
       \resizebox{\textwidth}{!}{\input{graph/gyroBiasSpeed}}
     \end{subfigure}
