@@ -51,14 +51,15 @@
 
 \setbeamertemplate{section page}[mine]
 
+\definecolor{myyellow}{RGB}{255, 211, 0}
 
 
 \newcommand*\nodestatecolor{green}
 \newcommand*\scalefilter{0.7}
 \newcommand*\initialstatetext{Previous State}
-\newcommand*\initialstatecolor{yellow}
+\newcommand*\initialstatecolor{myyellow}
 
-\tikzstyle{input}=[draw,fill=yellow,minimum width=2.6cm,thin]
+\tikzstyle{input}=[draw,fill=myyellow,minimum width=2.6cm,thin]
 \tikzstyle{method}=[draw,fill=pink,minimum width=1.8cm]
 \tikzstyle{arr}=[-latex,ultra thick]
 \tikzstyle{dummy}=[minimum width=2.6cm]
@@ -125,7 +126,7 @@ The goal of sensor fusion for state estimation is to \textbf{recover $X$}
 {\centering
 \textbf{Filter based method}
 
-\only<2->{\renewcommand*\nodestatecolor{yellow}}
+\only<2->{\renewcommand*\nodestatecolor{myyellow}}
 %% \only<2->{\renewcommand*\scalefilter{0.7}}
 \only<4->{\renewcommand*\initialstatecolor{blue!60}}
 \only<4->{\renewcommand*\initialstatetext{Initial State}}
@@ -165,7 +166,7 @@ We need a \textbf{deterministic solution}
 \vspace{0.5cm}
 {\centering
 \begin{tikzpicture}
-\tikzstyle{input}=[draw,fill=yellow,minimum width=3cm,thin]
+\tikzstyle{input}=[draw,fill=myyellow,minimum width=3cm,thin]
 \tikzstyle{method}=[draw,fill=pink,minimum width=2cm]
 \tikzstyle{every path}=[-latex,ultra thick]
 \node (C) [input] {Measurements};
@@ -284,7 +285,7 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 \end{frame}
 
 \begin{frame}{Back to the title}
-  \textcolor<4->{green}{Absolute scale velocity} \textcolor<3->{pink}{determination} combining \textcolor<2->{yellow}{visual and inertial measurements} for micro aerial vehicles
+  \textcolor<4->{green}{Absolute scale velocity} \textcolor<3->{pink}{determination} combining \textcolor<2->{myyellow}{visual and inertial measurements} for micro aerial vehicles
 
   \vspace{1em}
 
@@ -294,7 +295,7 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 
   {\centering
     \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
-      \node (A) [input, fill=yellow] {Measurements};
+      \node (A) [input, fill=myyellow] {Measurements};
       \node (B) [above=2mm of A] {Visual};
       \node (C) [below=2mm of A] {Inertial};
       \node<3-> (D) [method,right=of A] {Fusion};
@@ -490,6 +491,7 @@ $50\%$ relative error on speed and distance estimation
       \]
     \end{column}
     \begin{column}<5->{.5\textwidth}
+      \vspace{-1cm}
       \begin{figure}[h!]
         \centering
         \resizebox{0.8\textwidth}{!}{\input{graph/costXZReg}}
@@ -526,41 +528,55 @@ $50\%$ relative error on speed and distance estimation
 
 \begin{frame}{Conclusion}
 
-  %% \begin{columns}[T]
-  %%   \begin{column}{0.5\textwidth}
-  %%     {\centering
-  %%       Before:}
-  %%     \begin{itemize}
-  %%       \item Closed-form solution for visual
-  %%     \end{itemize}
-  %%   \end{column}
-  %%   \vrule{}
-  %%   \begin{column}{0.5\textwidth}
-  %%     {\centering
-  %%       After:}
-  %%   \end{column}
-  %% \end{columns}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      {\centering
+        Before:}
+      \begin{itemize}
+      \item Method for state estimation without initialization;
+      \item Does not work well in practice.
+      \end{itemize}
+    \end{column}
+    \vrule{}
+    \begin{column}{0.5\textwidth}
+      {\centering
+        After:}
+      \begin{itemize}
+      \item Gyroscope bias is the bottleneck;
+      \item Method to factor it out.
+      \end{itemize}
+    \end{column}
+  \end{columns}
 
-  \begin{enumerate}
-  \item Closed-form solution for visual-inertial fusion;
-    \begin{itemize}
-      \item No initialization required;
-      \item Recovers the absolute scale.
-    \end{itemize}
-  \item<2-> Does not work well in practice;
-  \item<3-> Gyroscope bias is a performance bottleneck;
-  \item<4-> \textbf{Method to estimate this bias};
-  \item<5-> Works well in practice;
-  \item<6-> Also provides the gyroscope bias.
-  \end{enumerate}
+  %% \begin{enumerate}
+  %% \item Closed-form solution for visual-inertial fusion;
+  %%   \begin{itemize}
+  %%     \item No initialization required;
+  %%     \item Recovers the absolute scale.
+  %%   \end{itemize}
+  %% \item<2-> Does not work well in practice;
+  %% \item<3-> Gyroscope bias is a performance bottleneck;
+  %% \item<4-> \textbf{Method to estimate this bias};
+  %% \item<5-> Works well in practice;
+  %% \item<6-> Also provides the gyroscope bias.
+  %% \end{enumerate}
 
 \end{frame}
 
 \begin{frame}{Future work}
   Implementation on a real platform
   \begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.6\textwidth]{images/drone.png}
+    \begin{subfigure}[b]{0.5\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{images/drone.png}
+    \end{subfigure}
+  \end{figure}
+  \begin{figure}[h!]
+    \begin{subfigure}[b]{0.5\textwidth}
+      \centering
+      \includegraphics[width=0.9\textwidth]{images/throwDrone.jpg}
+    \end{subfigure}
+
   \end{figure}
 
 \end{frame}
