@@ -91,32 +91,34 @@ vehicles}
 \AtBeginSection{\frame{\sectionpage}}
 
 \begin{frame}{Micro aerial vehicles}
-\includegraphics<1-5>[width=0.6\textwidth]{images/drone.png}
-\includegraphics<2>[width=0.6\textwidth]{images/droneMapping.png}
-\includegraphics<3>[width=0.6\textwidth]{images/droneRescue.png}
-\includegraphics<4>[width=0.6\textwidth]{images/droneFireIndoor.png}
-\includegraphics<6->[width=0.6\textwidth]{images/droneState.png}
-%% \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
+  \begin{columns}[T]
+    \column{.7\textwidth}
+    \centering
+    \includegraphics<1,5>[width=0.6\textwidth]{images/drone.png}
+    \includegraphics<2>[width=0.6\textwidth]{images/droneMapping.png}
+    \includegraphics<3>[width=0.6\textwidth]{images/droneRescue.png}
+    \includegraphics<4>[width=0.6\textwidth]{images/droneFireIndoor.png}
+    \includegraphics<6->[width=0.6\textwidth]{images/droneState.png}
+    %% \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
+    \hspace{-2cm}
+    \column<7->{.3\textwidth}
+    \begin{flushleft}
+    \small
+    A basic state vector:
+
+    \[
+    X =\left[\begin{array}{c}position \\ velocity \\ orientation\end{array}\right]
+    \]
+    \end{flushleft}
+  \end{columns}
 
 \onslide<5->
-\vspace{1em}
-\textbf{Localisation} in \textbf{various environments}
-
-\onslide<7->
-
-%drone is a rigid body - you can reduce it to a point
-A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientation\end{array}\right]$
-
-%% \column{.5\textwidth}
-%%         \begin{itemize}
-%%         \item $r$ position;
-%%         \item $\dot{r}$ velocity;
-%%         \item $q$ orientation.
-%%         \end{itemize}
+\vspace{2em}
+\textbf{Localization} in \textbf{various environments}
 
 \onslide<8->
-\vspace{1em}
-\textbf{The goal of sensor fusion for state estimation is to recover $X$}
+\vspace{2em}
+The goal of sensor fusion for state estimation is to \textbf{recover $X$}
 \end{frame}
 
 \subsection{Filter based fusion}
@@ -132,8 +134,9 @@ A basic state vector: $X =\left[\begin{array}{c}position \\ velocity \\ orientat
 \only<4->{\renewcommand*\initialstatetext{Initial State}}
 
 \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
+\path [draw=none, use as bounding box] (0,0) rectangle (17,4);
 
-\node (A) [input, fill=\initialstatecolor] {\initialstatetext};
+\node (A) at (1,3) [input, fill=\initialstatecolor] {\initialstatetext};
 \node (dummy1) [dummy, below=2mm of A] {};
 \node (C) [input,below=2mm of dummy1] {Measurements};
 \node (D) [method,right=of dummy1] {Fusion};
@@ -218,7 +221,7 @@ We need a \textbf{deterministic solution}
 { % all template changes are local to this group.
     \setbeamertemplate{navigation symbols}{}
     \begin{frame}[plain]{Absolute scale from visual measurements}
-      \vspace{1.03em}
+      \vspace{0.9em}
       \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}
      \end{frame}
 }
@@ -322,7 +325,7 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 \section{The closed-form solution}
 
 % So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
-\begin{frame}{The Closed-Form Solution - 2014}
+\begin{frame}{The Closed-Form Solution}
 
 Requires:
 \begin{itemize}
