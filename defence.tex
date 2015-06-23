@@ -337,7 +337,7 @@ Output:
 \begin{itemize}
 \item \textcolor<3->{red}{Initial velocity};
 \item \textcolor<3->{red}{Distance to point-features};
-\item \textcolor<3->{red}{Attitude}.
+\item \textcolor<3->{red}{Roll, pith}.
 \end{itemize}
 
 \onslide<2->
@@ -358,18 +358,21 @@ Output:
 \end{frame}
 
 \begin{frame}{Problem: not robust in practice}
-\textit{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
-\rightline{{\rm --- Matthias Faessler, ICRA 2015}}
 
 \begin{columns}
-  \column<2->{.5\textwidth}
+  \column<1->{.5\textwidth}
 \begin{figure}[h!]
   \centering
   \resizebox{\textwidth}{!}{\input{graph/CF2}}
 \end{figure}
-\column<3->{.5\textwidth}
+\column<2->{.5\textwidth}
 $50\%$ relative error on speed and distance estimation
 \end{columns}
+
+\onslide<3->
+\textit{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
+\rightline{{\rm --- Matthias Faessler, ICRA 2015}}
+
 \end{frame}
 
 \begin{frame}{Improving the performance}
@@ -528,25 +531,76 @@ $50\%$ relative error on speed and distance estimation
 
 \begin{frame}{Conclusion}
 
-  \begin{columns}[T]
-    \begin{column}{0.5\textwidth}
-      {\centering
-        Before:}
-      \begin{itemize}
-      \item Method for state estimation without initialization;
-      \item Does not work well in practice.
-      \end{itemize}
-    \end{column}
-    \vrule{}
-    \begin{column}{0.5\textwidth}
-      {\centering
-        After:}
-      \begin{itemize}
-      \item Gyroscope bias is the bottleneck;
-      \item Method to factor it out.
-      \end{itemize}
-    \end{column}
-  \end{columns}
+  \textbf{Theory}:
+
+  {\centering
+    \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
+      \node (A) [input, fill=myyellow] {Measurements};
+      \node (B) [above=2mm of A] {Visual};
+      \node (C) [below=2mm of A] {Inertial};
+      \node (D) [method,right=of A] {Fusion};
+      \node (E) [input, right=of D, fill=\nodestatecolor] {State};
+      \draw[arr] (A.east) -- (D.west);
+      \draw[arr] (D.east) -- (E.west);
+    \end{tikzpicture}
+  }
+
+
+  \onslide<2->{
+    \hrulefill
+
+    \textbf{Practice}:
+  }
+
+  \begin{overlayarea}{\textwidth}{0.6\textheight}
+
+    \includegraphics<2>[width=0.4\textwidth]{images/droneCrash.png}
+
+    \begin{columns}<3>
+      \begin{column}{.5\textwidth}
+        \centering
+        Acclerometer bias?
+
+        \includegraphics[width=0.8\textwidth]{images/droneFly.png}
+      \end{column}
+      \vrule{}
+      \begin{column}{.5\textwidth}
+        \centering
+        Gyroscope bias?
+
+        \includegraphics[width=0.8\textwidth]{images/droneCrash.png}
+      \end{column}
+    \end{columns}
+
+    \vspace{-3.65cm}
+
+    \onslide<4> \textbf{Optimization} to recover the gyroscope bias
+
+    \includegraphics<4>[width=0.4\textwidth]{images/droneFly.png}
+
+  \end{overlayarea}
+
+
+
+  %% \begin{columns}[T]
+  %%   \begin{column}{0.5\textwidth}
+  %%     {\centering
+  %%       Before:}
+  %%     \begin{itemize}
+  %%     \item Method for state estimation without initialization;
+  %%     \item Does not work well in practice.
+  %%     \end{itemize}
+  %%   \end{column}
+  %%   \vrule{}
+  %%   \begin{column}{0.5\textwidth}
+  %%     {\centering
+  %%       After:}
+  %%     \begin{itemize}
+  %%     \item Gyroscope bias is the bottleneck;
+  %%     \item Method to factor it out.
+  %%     \end{itemize}
+  %%   \end{column}
+  %% \end{columns}
 
   %% \begin{enumerate}
   %% \item Closed-form solution for visual-inertial fusion;
@@ -566,17 +620,14 @@ $50\%$ relative error on speed and distance estimation
 \begin{frame}{Future work}
   Implementation on a real platform
   \begin{figure}[h!]
-    \begin{subfigure}[b]{0.5\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
       \centering
       \includegraphics[width=0.9\textwidth]{images/drone.png}
     \end{subfigure}
-  \end{figure}
-  \begin{figure}[h!]
-    \begin{subfigure}[b]{0.5\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
       \centering
       \includegraphics[width=0.9\textwidth]{images/throwDrone.jpg}
     \end{subfigure}
-
   \end{figure}
 
 \end{frame}
