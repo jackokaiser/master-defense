@@ -1,15 +1,12 @@
-% This text is proprietary.
-% It's a part of presentation made by myself.
-% It may not used commercial.
-% The noncommercial use such as private and study is free
-% Sep. 2005
-% Author: Sascha Frank
-% University Freiburg
-% www.informatik.uni-freiburg.de/~frank/
-
-
 \documentclass{beamer}
 %% \usetheme{Warsaw}
+\usepackage{etex}
+\usepackage{ulem}
+
+\renewcommand<>{\sout}[1]{
+  \only#2{\beameroriginal{\sout}{#1}}
+  \invisible#2{#1}
+}
 
 \usepackage{color}
 \usepackage{booktabs}
@@ -21,7 +18,7 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamerfont{page number in head/foot}{size=\normalsize}
 \setbeamertemplate{footline}[frame number]
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,calc,shapes}
 %% \AtBeginSubsection{\frame{\subsectionpage}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 %% \DeclareMathOperator*{\argmin}{arg\,min}
@@ -324,6 +321,7 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 
 \section{The closed-form solution}
 
+\subsection{Expression}
 % So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
 \begin{frame}{The Closed-Form Solution}
 
@@ -359,7 +357,7 @@ Output:
 \end{frame}
 
 \begin{frame}{Problem: not robust in practice}
-\emph{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
+\textit{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
 \rightline{{\rm --- Matthias Faessler, ICRA 2015}}
 
 \begin{columns}
@@ -445,31 +443,60 @@ $50\%$ relative error on speed and distance estimation
 \subsection{Estimating the gyroscope bias}
 \begin{frame}{Estimating the gyroscope bias}
 
-  \begin{itemize}[<+->]
-  \item When solving  $\Xi X = S$, we are solving $\argmin_X ||\Xi X - S||^2$;
-  \item Unfortunately, we can not express the gyroscope bias linearly;
-  \item Alternative: non-linear minimization
-    \[
-    cost(B) = \argmin_X ||\Xi X - S||^2 \onslide<6->{\textcolor{blue}{+ \lambda \times |B|}}
-    \]
-  {\tiny With $B$ the gyroscope bias, $\Xi$ and $S$ computed with respect to $B$}
-  \end{itemize}
+  \vspace{0.7cm}
+  Reminder: \textcolor<5->{red}{$\Xi X = S$}
 
-  \onslide<4->
-  \begin{figure}[h!]
+  \vspace{0.2cm}
+  \begin{columns}[T]
+    \begin{column}{.5\textwidth}
     \centering
-      \begin{subfigure}[b]{0.47\textwidth}
-        \resizebox{\textwidth}{!}{\input{graph/costXZ2}}
-        \onslide<5->{\caption{Symmetry induced by the strong weight of the gravity}}
-      \end{subfigure}
-      \onslide<6->{
-      \begin{subfigure}[b]{0.47\textwidth}
-        \resizebox{\textwidth}{!}{\input{graph/costXZReg}}
-        \caption{With regularization $\lambda =3$}
-      \end{subfigure}
-      }
-  \end{figure}
+    \begin{itemize}
+    \item<2-> \sout<3->{Insert the gyro bias $B$ in $X$;}
+    \item<4-> Alternative: non-linear minimization of the residual
+      \[
+      cost(B) = \textcolor<5->{red}{\argmin_X ||\Xi X - S||^2}
+      \]
+        {\tiny With:\\
+          $B$ the gyroscope bias,\\
+          $\Xi$ and $S$ computed with respect to $B$}
+    \end{itemize}
+    \end{column}
+    \vrule{}
+    \begin{column}<6->{.5\textwidth}
+    \centering
+    \begin{figure}[h!]
+      \centering
+      \resizebox{0.8\textwidth}{!}{\input{graph/costXZ2}}
+      \caption{Cost function: residual with respect to gyroscope bias}
+    \end{figure}
+    \onslide<7->
+    \end{column}
+    \end{columns}
 
+  \vspace{0.5cm}
+  Symmetry induced by the strong weight of the gravity
+\end{frame}
+
+\begin{frame}{Dealing with the symmetry}
+
+  \includegraphics<1,3->[width=0.6\textwidth]{images/droneSymmetry.png}
+  \includegraphics<2>[width=0.6\textwidth]{images/droneNoSymmetry.png}
+
+  \begin{columns}[T]
+    \begin{column}<4->{.5\textwidth}
+      We tweak the cost function:
+      \[
+      cost(B) = \argmin_X ||\Xi X - S||^2 \textcolor{blue}{+ \lambda \times |B|}
+      \]
+    \end{column}
+    \begin{column}<5->{.5\textwidth}
+      \begin{figure}[h!]
+        \centering
+        \resizebox{0.8\textwidth}{!}{\input{graph/costXZReg}}
+        \caption{Regularized cost function with $\lambda =3$}
+      \end{figure}
+    \end{column}
+    \end{columns}
 \end{frame}
 
 \subsection{Validation}
@@ -498,6 +525,21 @@ $50\%$ relative error on speed and distance estimation
 \section{Conclusion}
 
 \begin{frame}{Conclusion}
+
+  %% \begin{columns}[T]
+  %%   \begin{column}{0.5\textwidth}
+  %%     {\centering
+  %%       Before:}
+  %%     \begin{itemize}
+  %%       \item Closed-form solution for visual
+  %%     \end{itemize}
+  %%   \end{column}
+  %%   \vrule{}
+  %%   \begin{column}{0.5\textwidth}
+  %%     {\centering
+  %%       After:}
+  %%   \end{column}
+  %% \end{columns}
 
   \begin{enumerate}
   \item Closed-form solution for visual-inertial fusion;
@@ -554,7 +596,6 @@ S_j = \textcolor<3->{green}{\lambda_1^i}\mu_1^i - \textcolor<3->{red}{V} t_j - \
 \]
 \end{frame}
 
-\subsection{Expression}
 \begin{frame}[noframenumbering]{The Overconstrained Linear System}
 
   \[
