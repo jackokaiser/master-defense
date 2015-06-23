@@ -329,55 +329,34 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 
 Requires:
 \begin{itemize}
-\item Calibrated camera;
-\item Inertial Measurement Unit (IMU);
-\item External Camera IMU transformation.
+\item \textcolor<3->{blue}{Calibrated camera};
+\item \textcolor<3->{blue}{Inertial Measurement Unit (IMU)};
+\item \textcolor<3->{blue}{External Camera IMU transformation}.
 \end{itemize}
 
 Output:
 \begin{itemize}
 \item \textcolor<3->{red}{Initial velocity};
-\item \textcolor<3->{green}{Distance to point-features};
-\item \textcolor<3->{blue}{Attitude}.
+\item \textcolor<3->{red}{Distance to point-features};
+\item \textcolor<3->{red}{Attitude}.
 \end{itemize}
 
 \onslide<2->
-
 \[
-S_j = \textcolor<3->{green}{\lambda_1^i}\mu_1^i - \textcolor<3->{red}{V} t_j - \textcolor<3->{blue}{G} \frac{t_j^2}{2} - \textcolor<3->{green}{\lambda^i_j} \mu^i_j
+\textcolor<3->{blue}{\Xi} \textcolor<3->{red}{X} = \textcolor<3->{blue}{S}
 \]
 \end{frame}
 
-\subsection{Linear system}
-\begin{frame}{The Overconstrained Linear System}
-
-  \[
-  \textcolor<3->{green}{S_j} = \textcolor<3->{red}{\lambda_1^i}\textcolor<3->{blue}{\mu_1^i} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_j} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_j^2}{2}} - \textcolor<3->{red}{\lambda^i_j}\textcolor<3->{blue}{\mu^i_j}
-  \]
-
-  Valid for every point-feature $i$ at any time $t_j$:
-
-  \onslide<2->
-  \[
-  \left[
-    \begin{array}{c}
-      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^1_2}\textcolor<3->{blue}{\mu^1_2} \\
-      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^2}\textcolor<3->{blue}{\mu_1^2} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^2_2}\textcolor<3->{blue}{\mu^2_2} \\
-      \vdots \\
-      \textcolor<3->{green}{S_3} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_3} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_3^2}{2}} - \textcolor<3->{red}{\lambda^1_3}\textcolor<3->{blue}{\mu^1_3} \\
-      \vdots \\
-      \textcolor<3->{green}{S_N} = \textcolor<3->{red}{\lambda_1^{n_i}}\textcolor<3->{blue}{\mu_1^{n_i}} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_N} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_N^2}{2}} - \textcolor<3->{red}{\lambda^{n_i}_N}\textcolor<3->{blue}{\mu^{n_i}_N}
-    \end{array}
-    \right.
-    \]
-
-    \onslide<3->
-    \[
-    \textcolor{blue}{\Xi} \textcolor{red}{X} = \textcolor{green}{S}
-    \]
-
+\begin{frame}{Test setup}
+  \includegraphics<1>[width=\textwidth]{images/setupTestDrone.png}
+  \includegraphics<2>[width=\textwidth]{images/setupTestDroneMotion.png}
+  \includegraphics<3>[width=\textwidth]{images/setupTestDroneGT.png}
+  \includegraphics<4>[width=\textwidth]{images/setupTestDroneFakeFeatures.png}
+  \includegraphics<5>[width=\textwidth]{images/setupTestDroneSpeedGT.png}
+  \includegraphics<6>[width=\textwidth]{images/setupTestDroneError.png}
+  \includegraphics<7>[width=\textwidth]{images/setupTestDrone1s.png}
+  \includegraphics<8>[width=\textwidth]{images/setupTestDrone3s.png}
 \end{frame}
-
 
 \begin{frame}{Problem: not robust in practice}
 \emph{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
@@ -549,6 +528,60 @@ $50\%$ relative error on speed and distance estimation
     Thank you for your attention,\\
     Any question?
   \end{center}
+\end{frame}
+
+% So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
+\begin{frame}[noframenumbering]{The Closed-Form Solution}
+
+Requires:
+\begin{itemize}
+\item Calibrated camera;
+\item Inertial Measurement Unit (IMU);
+\item External Camera IMU transformation.
+\end{itemize}
+
+Output:
+\begin{itemize}
+\item \textcolor<3->{red}{Initial velocity};
+\item \textcolor<3->{green}{Distance to point-features};
+\item \textcolor<3->{blue}{Attitude}.
+\end{itemize}
+
+\onslide<2->
+
+\[
+S_j = \textcolor<3->{green}{\lambda_1^i}\mu_1^i - \textcolor<3->{red}{V} t_j - \textcolor<3->{blue}{G} \frac{t_j^2}{2} - \textcolor<3->{green}{\lambda^i_j} \mu^i_j
+\]
+\end{frame}
+
+\subsection{Expression}
+\begin{frame}[noframenumbering]{The Overconstrained Linear System}
+
+  \[
+  \textcolor<3->{green}{S_j} = \textcolor<3->{red}{\lambda_1^i}\textcolor<3->{blue}{\mu_1^i} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_j} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_j^2}{2}} - \textcolor<3->{red}{\lambda^i_j}\textcolor<3->{blue}{\mu^i_j}
+  \]
+
+  Valid for every point-feature $i$ at any time $t_j$:
+
+  \onslide<2->
+  \[
+  \left[
+    \begin{array}{c}
+      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^1_2}\textcolor<3->{blue}{\mu^1_2} \\
+      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^2}\textcolor<3->{blue}{\mu_1^2} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^2_2}\textcolor<3->{blue}{\mu^2_2} \\
+      \vdots \\
+      \textcolor<3->{green}{S_3} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_3} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_3^2}{2}} - \textcolor<3->{red}{\lambda^1_3}\textcolor<3->{blue}{\mu^1_3} \\
+      \vdots \\
+      \textcolor<3->{green}{S_N} = \textcolor<3->{red}{\lambda_1^{n_i}}\textcolor<3->{blue}{\mu_1^{n_i}} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_N} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_N^2}{2}} - \textcolor<3->{red}{\lambda^{n_i}_N}\textcolor<3->{blue}{\mu^{n_i}_N}
+    \end{array}
+    \right.
+    \]
+
+    \onslide<3->
+    \[
+    \textcolor{blue}{\Xi} \textcolor{red}{X} = \textcolor{green}{S}
+    \]
+
 \end{frame}
 
 \begin{frame}[noframenumbering]{Gyroscope bias estimation}
