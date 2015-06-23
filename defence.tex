@@ -51,7 +51,8 @@
 
 \setbeamertemplate{section page}[mine]
 
-\definecolor{myyellow}{RGB}{255, 211, 0}
+\definecolor{myyellow}{RGB}{255, 127, 0}
+\definecolor{mypink}{RGB}{228, 0, 124}
 
 
 \newcommand*\nodestatecolor{green}
@@ -60,7 +61,7 @@
 \newcommand*\initialstatecolor{myyellow}
 
 \tikzstyle{input}=[draw,fill=myyellow,minimum width=2.6cm,thin]
-\tikzstyle{method}=[draw,fill=pink,minimum width=1.8cm]
+\tikzstyle{method}=[draw,fill=mypink,minimum width=1.8cm]
 \tikzstyle{arr}=[-latex,ultra thick]
 \tikzstyle{dummy}=[minimum width=2.6cm]
 
@@ -167,7 +168,7 @@ We need a \textbf{deterministic solution}
 {\centering
 \begin{tikzpicture}
 \tikzstyle{input}=[draw,fill=myyellow,minimum width=3cm,thin]
-\tikzstyle{method}=[draw,fill=pink,minimum width=2cm]
+\tikzstyle{method}=[draw,fill=mypink,minimum width=2cm]
 \tikzstyle{every path}=[-latex,ultra thick]
 \node (C) [input] {Measurements};
 \node (D) [method,right=of C] {Fusion};
@@ -285,7 +286,7 @@ The IMU consists of two sensors providing \textbf{physical quantities}:
 \end{frame}
 
 \begin{frame}{Back to the title}
-  \textcolor<4->{green}{Absolute scale velocity} \textcolor<3->{pink}{determination} combining \textcolor<2->{myyellow}{visual and inertial measurements} for micro aerial vehicles
+  \textcolor<4->{green}{Absolute scale velocity} \textcolor<3->{mypink}{determination} combining \textcolor<2->{myyellow}{visual and inertial measurements} for micro aerial vehicles
 
   \vspace{1em}
 
