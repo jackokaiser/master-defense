@@ -52,11 +52,12 @@
 \setbeamertemplate{section page}[mine]
 
 \definecolor{myyellow}{RGB}{255, 127, 0}
-\definecolor{mypink}{RGB}{228, 0, 124}
+\definecolor{mypink}{RGB}{255, 210, 201}
 
 
 \newcommand*\nodestatecolor{green}
 \newcommand*\scalefilter{0.7}
+\newcommand*\themethod{Linear System}
 \newcommand*\initialstatetext{Previous State}
 \newcommand*\initialstatecolor{myyellow}
 
@@ -83,44 +84,27 @@ vehicles}
 
 \begin{document}
 
-\maketitle
+%% \maketitle
 
-\section{Sensor fusion}
-
-\AtBeginSection{\frame{\sectionpage}}
-
-\begin{frame}{Micro aerial vehicles}
-  \begin{columns}[T]
-    \column{.7\textwidth}
-    \centering
-    \includegraphics<1,5>[width=0.6\textwidth]{images/drone.png}
-    \includegraphics<2>[width=0.6\textwidth]{images/droneMapping.png}
-    \includegraphics<3>[width=0.6\textwidth]{images/droneRescue.png}
-    \includegraphics<4>[width=0.6\textwidth]{images/droneFireIndoor.png}
-    \includegraphics<6->[width=0.6\textwidth]{images/droneState.png}
-    %% \includegraphics<3->[width=0.6\textwidth]{images/dronePointState.png}
-    \hspace{-2cm}
-    \column<7->{.3\textwidth}
-    \begin{flushleft}
-    \small
-    A basic state vector:
-
-    \[
-    X =\left[\begin{array}{c}position \\ velocity \\ orientation\end{array}\right]
-    \]
-    \end{flushleft}
-  \end{columns}
+\begin{frame}{State estimation for drones}
+  \includegraphics<1,5->[width=0.6\textwidth]{images/drone.png}
+  \includegraphics<2>[width=0.6\textwidth]{images/droneMapping.png}
+  \includegraphics<3>[width=0.6\textwidth]{images/droneRescue.png}
+  \includegraphics<4>[width=0.6\textwidth]{images/droneFireIndoor.png}
 
 \onslide<5->
-\vspace{2em}
+
 \textbf{Localization} in \textbf{various environments}
 
-\onslide<8->
-\vspace{2em}
-The goal of sensor fusion for state estimation is to \textbf{recover $X$}
-\end{frame}
+\onslide<6->
 
-\subsection{Filter based fusion}
+\vspace{1em}
+Reliable sensors:
+\begin{itemize}
+  \item Camera;
+  \item Inertial Measurement Unit (IMU).
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Visual-inertial sensor fusion}
 
@@ -183,363 +167,27 @@ We need a \textbf{deterministic solution}
 
 \end{frame}
 
-\subsection{Deterministic solution}
-
-\begin{frame}{Deterministic solutions in Computer Vision}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{images/directMethod.png}
-\end{figure}
-
-%% \onslide<2->
-%% \begin{itemize}
-%% \item 8-point algorithm;
-%% \item sparse model-based image alignment;
-%% \item ...
-%% \end{itemize}
-
-\onslide<2->
-
-{\small
-  But the relative \textbf{translation} and \textbf{distance to features} are recovered only \textbf{up to scale}
-}
-
-% Camera is an angle sensor
-\end{frame}
-
-\subsection{Absolute scale}
-
-{ % all template changes are local to this group.
-    \setbeamertemplate{navigation symbols}{}
-    \begin{frame}[plain]{Absolute scale from visual measurements}
-      How big is this building?
-      \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingDetour.png}\end{center}
-     \end{frame}
-}
-{ % all template changes are local to this group.
-    \setbeamertemplate{navigation symbols}{}
-    \begin{frame}[plain]{Absolute scale from visual measurements}
-      \vspace{0.9em}
-      \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}
-     \end{frame}
-}
-
-
-%% \begin{frame}{Absolute scale from visual measurements}
-%%   How big is this building?
-%%   \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingDetour.png}\end{center}
-
-%% \end{frame}
-
-%% % we can tell the central door is bigger than the people
-%% % but now way to determine physical quantities: how big, how far, how fast is the camera moving,..
-%% % Even provided with many images
-%% %
-
-%% \begin{frame}{Absolute scale from visual measurements}
-%%   \vspace{-2em}\begin{center}\includegraphics[width=\textwidth]{images/buildingScale.jpg}\end{center}
-%% \end{frame}
-%% % We need to known a physical quantity to set the absolute scale
-%% % That's how drones are initialized..
-
-
-\begin{frame}{Methods to recover the absolute scale}
-
-  \begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.3\textwidth}
-      \includegraphics[width=\textwidth]{images/referenceInEnv.png}
-      \onslide<4->{
-        \caption{Not suited to unknown environments}
-      }
-    \end{subfigure}
-    \onslide<2->{
-      \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{images/altitudeSensor.png}
-      \onslide<4->{
-        \caption{Not precise, works only in hover}
-      }
-      \end{subfigure}
-    }
-    \onslide<3->{
-      \begin{subfigure}[b]{0.3\textwidth}
-        \includegraphics[width=\textwidth]{images/gpsSensor.png}
-      \onslide<4->{
-        \caption{Does not work in GPS denied environments}
-      }
-      \end{subfigure}
-    }
-  \end{figure}
-\end{frame}
-
-% so far we only considered visual measurements
-% the IMU provides physical quantity (m/s^2 and rad/s)
-\begin{frame}{Inertial Measurement Unit (IMU)}
-
-The IMU consists of two sensors providing \textbf{physical quantities}:
-\begin{itemize}
-\item Accelerometer: linear acceleration (and gravity) ($m/s^2$);
-\item Gyroscope: angular velocity ($rad/s$).
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}{Back to the title}
-  \textcolor<4->{green}{Absolute scale velocity} \textcolor<3->{mypink}{determination} combining \textcolor<2->{myyellow}{visual and inertial measurements} for micro aerial vehicles
-
-  \vspace{1em}
-
-
-  \onslide<2->
-
-
-  {\centering
-    \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
-      \node (A) [input, fill=myyellow] {Measurements};
-      \node (B) [above=2mm of A] {Visual};
-      \node (C) [below=2mm of A] {Inertial};
-      \node<3-> (D) [method,right=of A] {Fusion};
-      \node<4-> (E) [input, right=of D, fill=\nodestatecolor] {State (Absolute scale)};
-      \draw<3->[arr] (A.east) -- (D.west);
-      \draw<4->[arr] (D.east) -- (E.west);
-    \end{tikzpicture}
-  }
-
-\end{frame}
-% \begin{frame}{Dead reckoning}
-% Provided only with inertial measurements, we are subject to drift.
-
-% %bias ?
-% \end{frame}
-
-\begin{frame}
-\frametitle{Table of Contents}
-\tableofcontents
-\end{frame}
-
-
-\setbeamertemplate{section page}[mine2]
-
-\section{The closed-form solution}
-
-\subsection{Expression}
-% So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
 \begin{frame}{The Closed-Form Solution}
 
-Requires:
-\begin{itemize}
-\item \textcolor<3->{blue}{Calibrated camera};
-\item \textcolor<3->{blue}{Inertial Measurement Unit (IMU)};
-\item \textcolor<3->{blue}{External Camera IMU transformation}.
-\end{itemize}
-
-Output:
-\begin{itemize}
-\item \textcolor<3->{red}{Initial velocity};
-\item \textcolor<3->{red}{Distance to point-features};
-\item \textcolor<3->{red}{Roll, pith}.
-\end{itemize}
-
-\onslide<2->
-\[
-\textcolor<3->{blue}{\Xi} \textcolor<3->{red}{X} = \textcolor<3->{blue}{S}
-\]
-\end{frame}
-
-\begin{frame}{Test setup}
-  \includegraphics<1>[width=\textwidth]{images/setupTestDrone.png}
-  \includegraphics<2>[width=\textwidth]{images/setupTestDroneMotion.png}
-  \includegraphics<3>[width=\textwidth]{images/setupTestDroneGT.png}
-  \includegraphics<4>[width=\textwidth]{images/setupTestDroneFakeFeatures.png}
-  \includegraphics<5>[width=\textwidth]{images/setupTestDroneSpeedGT.png}
-  \includegraphics<6>[width=\textwidth]{images/setupTestDroneError.png}
-  \includegraphics<7>[width=\textwidth]{images/setupTestDrone1s.png}
-  \includegraphics<8>[width=\textwidth]{images/setupTestDrone3s.png}
-\end{frame}
-
-\begin{frame}{Problem: not robust in practice}
-
-\begin{columns}
-  \column<1->{.5\textwidth}
-\begin{figure}[h!]
-  \centering
-  \resizebox{\textwidth}{!}{\input{graph/CF2}}
-\end{figure}
-\column<2->{.5\textwidth}
-$50\%$ relative error on speed and distance estimation
-\end{columns}
-
-\onslide<3->
-\textit{''\textbf{A closed-form solution} for state estimation with a visual-inertial system that does not require initialization was presented. However, this approach is \textbf{not suitable for systems that rely on noisy sensor data}''}\\
-\rightline{{\rm --- Matthias Faessler, ICRA 2015}}
-
-\end{frame}
-
-\begin{frame}{Improving the performance}
-  What makes the estimations so bad?
-
-  \begin{block}{Possible bottlenecks}
-    \begin{itemize}
-    \item<1-> Motion;
-    \item<2-> Observed features;
-    \item<3-> Noisy sensors.
-    %%   \begin{itemize}
-    %%   \item Impact of \textcolor{blue}{bias} on performance;
-    %%   \item Impact of \textcolor{green}{non systematic errors} on performance.
-    %%   \end{itemize}
-    \end{itemize}
-  \end{block}
-
-  \onslide<4->
-  Sensors provide measurements affected by a Gaussian noise:
-
-  \[
-  N(\mu + \textcolor<2->{blue}{B}, \textcolor<2->{green}{\sigma^2})
-  \]
-
-  \onslide<5->
-  We considered:
-  \begin{itemize}
-  \item \textcolor{blue}{Biased} accelerometer;
-  \item \textcolor{blue}{Biased} gyroscope.
-  \end{itemize}
-\end{frame}
-
-
-%% \begin{frame}{Numerical stability}
-%%   \[
-%%   \left[
-%%     \begin{array}{lcl}
-%%       S_j &=& \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j\\
-%%       0_3 &=& \lambda_1^1\mu_1^1 - \lambda_j^1\mu_j^1 - \lambda_1^i\mu_1^i + \lambda^i_j \mu^i_j
-%%     \end{array}
-%%   \right.
-%%   \]
-
-%% \[
-%% S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
-%% \]
-%% \end{frame}
-\subsection{Identifying performance bottlenecks}
-\begin{frame}{Biased inertial measurements}
-
-  \begin{center}
-    \textbf{Speed estimation error}
-  \end{center}
-
-  \begin{columns}[T]
-    \column{.5\textwidth}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.85\textwidth}{!}{\input{graph/accBiasSpeed}}
-      \caption{Varying accelerometer bias}
-    \end{figure}
-    \column{.5\textwidth}
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.85\textwidth}{!}{\input{graph/gyroBiasSpeed}}
-      \caption{Varying gyroscope bias}
-    \end{figure}
-
-  \end{columns}
-\end{frame}
-
-\subsection{Estimating the gyroscope bias}
-\begin{frame}{Estimating the gyroscope bias}
-
-  \vspace{0.7cm}
-  Reminder: \textcolor<5->{red}{$\Xi X = S$}
-
-  \vspace{0.2cm}
-  \begin{columns}[T]
-    \begin{column}{.5\textwidth}
-    \centering
-    \begin{itemize}
-    \item<2-> \sout<3->{Insert the gyro bias $B$ in $X$;}
-    \item<4-> Alternative: non-linear minimization of the residual
-      \[
-      cost(B) = \textcolor<5->{red}{\argmin_X ||\Xi X - S||^2}
-      \]
-        {\tiny With:\\
-          $B$ the gyroscope bias,\\
-          $\Xi$ and $S$ computed with respect to $B$}
-    \end{itemize}
-    \end{column}
-    \vrule{}
-    \begin{column}<6->{.5\textwidth}
-    \centering
-    \begin{figure}[h!]
-      \centering
-      \resizebox{0.8\textwidth}{!}{\input{graph/costXZ2}}
-      \caption{Cost function: residual with respect to gyroscope bias}
-    \end{figure}
-    \onslide<7->
-    \end{column}
-    \end{columns}
-
-  \vspace{0.5cm}
-  Symmetry induced by the strong weight of the gravity
-\end{frame}
-
-\begin{frame}{Dealing with the symmetry}
-
-  \includegraphics<1,3->[width=0.6\textwidth]{images/droneSymmetry.png}
-  \includegraphics<2>[width=0.6\textwidth]{images/droneNoSymmetry.png}
-
-  \begin{columns}[T]
-    \begin{column}<4->{.5\textwidth}
-      We tweak the cost function:
-      \[
-      cost(B) = \argmin_X ||\Xi X - S||^2 \textcolor{blue}{+ \lambda \times |B|}
-      \]
-    \end{column}
-    \begin{column}<5->{.5\textwidth}
-      \vspace{-1cm}
-      \begin{figure}[h!]
-        \centering
-        \resizebox{0.8\textwidth}{!}{\input{graph/costXZReg}}
-        \caption{Regularized cost function with $\lambda =3$}
-      \end{figure}
-    \end{column}
-    \end{columns}
-\end{frame}
-
-\subsection{Validation}
-
-\begin{frame}{Results}
-  \begin{figure}[h!]
-    \centering
-    \textbf{Speed estimation error}\\
-    \vspace{1em}
-
-    \resizebox{0.5\textwidth}{!}{\input{graph/speed}}
-  \end{figure}
+  \begin{flushright}
+    \small
+    Transactions on Robotics (T-RO) 2012\\
+    International Journal of Computer Vision (IJCV) 2014
+  \end{flushright}
 
   \onslide<2->
-  Moreover, our technique:
-  \begin{itemize}
-    \item Does not require initialization;
-    \item Provides the gyroscope bias.
-  \end{itemize}
 
-\end{frame}
-
-
-\setbeamertemplate{section page}[mine]
-
-\section{Conclusion}
-
-\begin{frame}{Conclusion}
+  %% \vspace{-1em}
 
   \textbf{Theory}:
 
+  \only<5->{\renewcommand*\themethod{Non-linear optimization}}
   {\centering
     \begin{tikzpicture}[scale=\scalefilter, every node/.style={transform shape}]
       \node (A) [input, fill=myyellow] {Measurements};
       \node (B) [above=2mm of A] {Visual};
       \node (C) [below=2mm of A] {Inertial};
-      \node (D) [method,right=of A] {Fusion};
+      \node (D) [method,right=of A, minimum width=7cm] {Fusion \textcolor{red}{(\themethod)}};
       \node (E) [input, right=of D, fill=\nodestatecolor] {State};
       \draw[arr] (A.east) -- (D.west);
       \draw[arr] (D.east) -- (E.west);
@@ -547,7 +195,7 @@ $50\%$ relative error on speed and distance estimation
   }
 
 
-  \onslide<2->{
+  \onslide<3->{
     \hrulefill
 
     \textbf{Practice}:
@@ -555,9 +203,9 @@ $50\%$ relative error on speed and distance estimation
 
   \begin{overlayarea}{\textwidth}{0.6\textheight}
 
-    \includegraphics<2>[width=0.4\textwidth]{images/droneCrash.png}
+    \includegraphics<3>[width=0.4\textwidth]{images/droneCrash.png}
 
-    \begin{columns}<3>
+    \begin{columns}<4>
       \begin{column}{.5\textwidth}
         \centering
         Acclerometer bias?
@@ -575,183 +223,21 @@ $50\%$ relative error on speed and distance estimation
 
     \vspace{-3.65cm}
 
-    \onslide<4> \textbf{Optimization} to recover the gyroscope bias
+    \onslide<5> \textbf{Optimization} to recover the gyroscope bias
 
-    \includegraphics<4>[width=0.4\textwidth]{images/droneFly.png}
+    \includegraphics<5>[width=0.4\textwidth]{images/droneFly.png}
 
   \end{overlayarea}
-
-
-
-  %% \begin{columns}[T]
-  %%   \begin{column}{0.5\textwidth}
-  %%     {\centering
-  %%       Before:}
-  %%     \begin{itemize}
-  %%     \item Method for state estimation without initialization;
-  %%     \item Does not work well in practice.
-  %%     \end{itemize}
-  %%   \end{column}
-  %%   \vrule{}
-  %%   \begin{column}{0.5\textwidth}
-  %%     {\centering
-  %%       After:}
-  %%     \begin{itemize}
-  %%     \item Gyroscope bias is the bottleneck;
-  %%     \item Method to factor it out.
-  %%     \end{itemize}
-  %%   \end{column}
-  %% \end{columns}
-
-  %% \begin{enumerate}
-  %% \item Closed-form solution for visual-inertial fusion;
-  %%   \begin{itemize}
-  %%     \item No initialization required;
-  %%     \item Recovers the absolute scale.
-  %%   \end{itemize}
-  %% \item<2-> Does not work well in practice;
-  %% \item<3-> Gyroscope bias is a performance bottleneck;
-  %% \item<4-> \textbf{Method to estimate this bias};
-  %% \item<5-> Works well in practice;
-  %% \item<6-> Also provides the gyroscope bias.
-  %% \end{enumerate}
-
-\end{frame}
-
-\begin{frame}{Future work}
-  Implementation on a real platform
-  \begin{figure}[h!]
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=0.9\textwidth]{images/drone.png}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \centering
-      \includegraphics[width=0.9\textwidth]{images/throwDrone.jpg}
-    \end{subfigure}
-  \end{figure}
 
 \end{frame}
 
 \begin{frame}[plain,c]
+  \includegraphics[width=0.6\textwidth]{images/drone.png}
+
   \begin{center}
     Thank you for your attention,\\
-    Any question?
+    come visit our poster
   \end{center}
 \end{frame}
-
-% So far, knowledge of previous state was required. Now we have a Closed-form solution that only relies on measurements over a short interval of time
-\begin{frame}[noframenumbering]{The Closed-Form Solution}
-
-Requires:
-\begin{itemize}
-\item Calibrated camera;
-\item Inertial Measurement Unit (IMU);
-\item External Camera IMU transformation.
-\end{itemize}
-
-Output:
-\begin{itemize}
-\item \textcolor<3->{red}{Initial velocity};
-\item \textcolor<3->{green}{Distance to point-features};
-\item \textcolor<3->{blue}{Attitude}.
-\end{itemize}
-
-\onslide<2->
-
-\[
-S_j = \textcolor<3->{green}{\lambda_1^i}\mu_1^i - \textcolor<3->{red}{V} t_j - \textcolor<3->{blue}{G} \frac{t_j^2}{2} - \textcolor<3->{green}{\lambda^i_j} \mu^i_j
-\]
-\end{frame}
-
-\begin{frame}[noframenumbering]{The Overconstrained Linear System}
-
-  \[
-  \textcolor<3->{green}{S_j} = \textcolor<3->{red}{\lambda_1^i}\textcolor<3->{blue}{\mu_1^i} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_j} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_j^2}{2}} - \textcolor<3->{red}{\lambda^i_j}\textcolor<3->{blue}{\mu^i_j}
-  \]
-
-  Valid for every point-feature $i$ at any time $t_j$:
-
-  \onslide<2->
-  \[
-  \left[
-    \begin{array}{c}
-      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^1_2}\textcolor<3->{blue}{\mu^1_2} \\
-      \textcolor<3->{green}{S_2} = \textcolor<3->{red}{\lambda_1^2}\textcolor<3->{blue}{\mu_1^2} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_2} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_2^2}{2}} - \textcolor<3->{red}{\lambda^2_2}\textcolor<3->{blue}{\mu^2_2} \\
-      \vdots \\
-      \textcolor<3->{green}{S_3} = \textcolor<3->{red}{\lambda_1^1}\textcolor<3->{blue}{\mu_1^1} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_3} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_3^2}{2}} - \textcolor<3->{red}{\lambda^1_3}\textcolor<3->{blue}{\mu^1_3} \\
-      \vdots \\
-      \textcolor<3->{green}{S_N} = \textcolor<3->{red}{\lambda_1^{n_i}}\textcolor<3->{blue}{\mu_1^{n_i}} - \textcolor<3->{red}{V}\textcolor<3->{blue}{t_N} - \textcolor<3->{red}{G} \textcolor<3->{blue}{\frac{t_N^2}{2}} - \textcolor<3->{red}{\lambda^{n_i}_N}\textcolor<3->{blue}{\mu^{n_i}_N}
-    \end{array}
-    \right.
-    \]
-
-    \onslide<3->
-    \[
-    \textcolor{blue}{\Xi} \textcolor{red}{X} = \textcolor{green}{S}
-    \]
-
-\end{frame}
-
-\begin{frame}[noframenumbering]{Gyroscope bias estimation}
-  \begin{figure}[h!]
-    \centering
-
-    \begin{subfigure}[b]{0.78\textwidth}
-      \caption{Optimized Closed-form solution}
-      \resizebox{0.45\textwidth}{!}{\input{graph/opt30ftspeed}} ~
-      \resizebox{0.45\textwidth}{!}{\input{graph/biasEstimation30Ft}}
-    \end{subfigure}
-
-    \begin{subfigure}[b]{0.35\textwidth}
-      \caption{Original Closed-form solution}
-      \resizebox{\textwidth}{!}{\input{graph/gyroBiasSpeed}}
-    \end{subfigure}
-
-  \end{figure}
-\end{frame}
-
-\begin{frame}[noframenumbering]{Numerical stability}
-
-  \begin{columns}
-    \begin{column}{.5\textwidth}
-    {\small
-    \[
-    \left[
-      \begin{array}{lcl}
-        S_j &=& \lambda_1^1\mu_1^1 - V t_j - G \frac{t_j^2}{2} - \lambda^1_j \mu^1_j\\
-        0_3 &=& \lambda_1^1\mu_1^1 - \lambda_j^1\mu_j^1 - \lambda_1^i\mu_1^i + \lambda^i_j \mu^i_j
-      \end{array}
-      \right.
-      \]
-    }
-    \end{column}
-    \vrule{}
-    \begin{column}{.5\textwidth}
-    {\small
-    \[
-    S_j = \lambda_1^i\mu_1^i - V t_j - G \frac{t_j^2}{2} - \lambda^i_j \mu^i_j
-    \]
-    }
-    \end{column}
-  \end{columns}
-
-  \begin{figure}[h!]
-    \centering
-    \resizebox{0.5\textwidth}{!}{\input{graph/CF2vsCF3}}
-  \end{figure}
-
-\end{frame}
-
-%% \begin{document}
-%% \title{Simple Beamer Class}
-%% \author{Sascha Frank}
-%% \date{\today}
-
-%% \frame{\titlepage}
-
-%% \frame{\frametitle{Table of contents}\tableofcontents}
-
-
 
 \end{document}
