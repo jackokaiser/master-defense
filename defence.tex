@@ -203,7 +203,12 @@ We need a \textbf{deterministic solution}
 
   \begin{overlayarea}{\textwidth}{0.6\textheight}
 
-    \includegraphics<3>[width=0.4\textwidth]{images/droneCrash.png}
+    \begin{columns}[T]<3>
+      \column{.5\textwidth}
+      \includegraphics<3>[width=\textwidth]{images/droneCrash.png}
+      \column{.5\textwidth}
+      \textbf{50\% error} on speed estimation
+    \end{columns}
 
     \begin{columns}<4>
       \begin{column}{.5\textwidth}
@@ -223,9 +228,17 @@ We need a \textbf{deterministic solution}
 
     \vspace{-3.65cm}
 
-    \onslide<5> \textbf{Optimization} to recover the gyroscope bias
 
-    \includegraphics<5>[width=0.4\textwidth]{images/droneFly.png}
+    \onslide<5>
+
+    \begin{columns}[T]<5>
+      \column{.5\textwidth}
+      \includegraphics<5>[width=\textwidth]{images/droneFly.png}
+      \column{.5\textwidth}
+      \textbf{Optimization} to recover the gyroscope bias\\
+      \vspace{1cm}
+      \textbf{10\% error} on speed estimation
+    \end{columns}
 
   \end{overlayarea}
 
